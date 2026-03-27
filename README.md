@@ -17,7 +17,7 @@
 
 ## 🚀 Live Demo
 
-🌐 **[Deployed Link →]()**
+🌐 **[Deployed Link →](https://roast-and-rich.netlify.app/)**
 
 ---
 

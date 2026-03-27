@@ -74,8 +74,10 @@ body { background: var(--bg); }
   <div class="inner">
     <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
     <div style="font-size:.85rem;color:var(--text3)">Setting up your profile</div>
-    <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
-    <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+    </div>
   </div>
 </nav>
 

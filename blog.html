@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Blog</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:1100px;margin:0 auto;padding:84px 40px 80px}
+.blog-hero{text-align:center;margin-bottom:56px}
+.blog-hero .eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--pink-dim);border:1px solid var(--pink);border-radius:20px;padding:5px 14px;font-size:.76rem;font-weight:600;color:var(--pink);margin-bottom:18px}
+.blog-thumb{height:160px;display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative;overflow:hidden}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:22px}
+.blog-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);overflow:hidden;transition:border-color .2s,transform .2s,box-shadow .2s;cursor:pointer;display:flex;flex-direction:column}
+.blog-card:nth-child(odd):hover{border-color:var(--green);transform:translateY(-4px);box-shadow:var(--shadow-green)}
+.blog-card:nth-child(even):hover{border-color:var(--pink);transform:translateY(-4px);box-shadow:var(--shadow-pink)}
+.blog-body{padding:18px 20px;flex:1;display:flex;flex-direction:column}
+.blog-tag{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.blog-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:8px;line-height:1.4;color:var(--text)}
+.blog-intro{font-size:.82rem;color:var(--text3);line-height:1.65;margin-bottom:14px;flex:1}
+.blog-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px;margin-top:auto}
+.blog-read-time{font-size:.72rem;color:var(--text3)}
+@media(max-width:640px){.wrap{padding:80px 16px 60px}.blog-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading blog...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link active">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a><a href="fomo.html">🚦 FOMO</a>
+    <a href="wealth.html">📈 Wealth</a><a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a><a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a><a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a><a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="blog-hero anim-fade-up">
+    <div class="eyebrow">📝 Roast &amp; Rich Blog</div>
+    <h1 class="display d-xl mb-12">Money advice that <span class="pink">doesn't bore</span> you</h1>
+    <p class="body-lg" style="max-width:500px;margin:0 auto">No jargon. No aunty advice. Just Gen Z-friendly money talk — with memes energy and actual substance.</p>
+  </div>
+
+  <div class="blog-grid anim-stagger">
+
+    <!-- Blog 1 -->
+    <div class="blog-card" onclick="location.href='blog-1.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(255,32,112,.15),rgba(170,238,34,.08))">🔥</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:var(--pink)">Origin Story</div>
+        <div class="blog-title">What is Roast&Rich? Why we built this (and why you need it)</div>
+        <div class="blog-intro">We were tired of finance apps that felt like homework. So we built one that actually roasts you — in the most helpful way possible. Here's the full story.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 4 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog 2 -->
+    <div class="blog-card" onclick="location.href='blog-2.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(170,238,34,.15),rgba(0,229,255,.08))">📈</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:var(--green)">Investing Basics</div>
+        <div class="blog-title">SIP explained like you're 17 — no boring finance lecture</div>
+        <div class="blog-intro">What if ₹500/month could turn into ₹60 lakh? That's not a scam. That's SIP + time. Here's exactly how it works, in plain desi English.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 5 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog 3 -->
+    <div class="blog-card" onclick="location.href='blog-3.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(255,204,0,.15),rgba(255,32,112,.08))">🎯</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:var(--warn)">FIRE Movement</div>
+        <div class="blog-title">What's your FIRE number? The magic formula that tells you when you're free</div>
+        <div class="blog-intro">FIRE = Financial Independence, Retire Early. There's a simple calculation that tells you exactly how much you need to never work again. Let's do the math.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 6 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog 4 -->
+    <div class="blog-card" onclick="location.href='blog-4.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(180,74,255,.12),rgba(255,32,112,.08))">💸</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:#b44aff">Gen Z & Money</div>
+        <div class="blog-title">Why Gen Z struggles with money — and it's NOT our fault</div>
+        <div class="blog-intro">UPI makes spending invisible. Reels make everyone look rich. And nobody taught us this stuff in school. Here's why we're in this mess — and how to get out.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 5 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog 5 -->
+    <div class="blog-card" onclick="location.href='blog-5.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(0,230,118,.12),rgba(170,238,34,.08))">🏦</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:var(--success)">Mutual Funds</div>
+        <div class="blog-title">Mutual Funds, explained using a group order on a food-delivery app</div>
+        <div class="blog-intro">You know how splitting a group order is easier than ordering alone? Mutual funds work exactly like that — but for your money and the stock market.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 5 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blog 6 -->
+    <div class="blog-card" onclick="location.href='blog-6.html'">
+      <div class="blog-thumb" style="background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(170,238,34,.06))">📖</div>
+      <div class="blog-body">
+        <div class="blog-tag" style="color:#00e5ff">Finance 101</div>
+        <div class="blog-title">20 financial terms every Gen Z should know (explained without cringe)</div>
+        <div class="blog-intro">EMI, SIP, NAV, XIRR, CTC, TDS... these words sound like a government exam, but they're actually about YOUR money. Here's the cheat sheet.</div>
+        <div class="blog-footer">
+          <span class="blog-read-time">⏱ 7 min read</span>
+          <span class="btn btn-ghost btn-sm" style="pointer-events:none">Read more →</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

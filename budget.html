@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Smart Budget</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:820px;margin:0 auto;padding:84px 40px 60px}
+.budget-list{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.budget-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:var(--surface);border-radius:var(--radius-sm);border-left:3px solid var(--green);transition:border-color .15s;gap:12px}
+.budget-row:hover{border-left-color:var(--pink)}
+.budget-name{font-weight:600;font-size:.9rem}
+.budget-tip{font-size:.72rem;color:var(--text3);margin-top:2px}
+.budget-pct{font-size:.72rem;color:var(--text3);margin-left:8px}
+/* Fixed: budget-amt no longer overflows */
+.budget-amt{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.9rem;
+  flex-shrink:0;margin-left:14px;max-width:120px;text-align:right;word-break:break-word;
+}
+@media(max-width:640px){.wrap{padding:80px 16px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Preparing your budget...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link active">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a><a href="fomo.html">🚦 FOMO Filter</a>
+    <a href="wealth.html">📈 Wealth Builder</a><a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a><a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a><a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a><a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Smart Budget 📊</h1>
+  </div>
+  <p class="body-md" id="budget-sub">AI-generated personalised budget for your city and lifestyle.</p>
+  <div class="mt-20"></div>
+  <button class="btn btn-green btn-full" onclick="doBudget()">Generate my personalised budget →</button>
+  <div id="budget-result"></div>
+  <div class="chart-wrap"><canvas id="budget-chart" class="hidden" style="max-height:280px"></canvas></div>
+  <div class="budget-list hidden" id="budget-list"></div>
+  <div id="budget-summary" class="hidden" style="margin-top:16px"></div>
+</div>
+
+<script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+let bChart = null;
+const COLORS = ['#ff2070','#aaee22','#00e5ff','#ffd600','#ff6b35','#b44aff','#00e676','#ff9500','#f06292','#4fc3f7'];
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (!requireProfile()) return;
+  const p = RR.profile;
+  document.getElementById('budget-sub').textContent =
+    `Personalised for ${p.name} in ${p.city} · ${p.situation}`;
+});
+
+async function doBudget() {
+  if (!requireProfile()) return;
+  const p      = RR.profile;
+  const income = Math.max(p.income || p.spend || 3000, 500);
+  const res    = document.getElementById('budget-result');
+  showLoading(res);
+
+  const gNote = p.gender === 'female'
+    ? 'Include a "Personal Care / Skincare" category for female user.'
+    : '';
+
+  const raw = await callAI(`${profileStr()}
+${gNote}
+Return ONLY valid JSON — zero extra text, no backticks, no markdown:
+{"categories":[
+{"name":"Rent/PG/Hostel","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Food & Groceries","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Transport","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Study/Work","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Entertainment","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Shopping/Personal","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"SIP/Investment","amount":0,"percentage":0,"tip":"practical tip"},
+{"name":"Emergency Buffer","amount":0,"percentage":0,"tip":"practical tip"}
+],"goal_note":"2 sentences","one_year":"1 year projection"}
+All amounts MUST sum to exactly ₹${income}. Realistic for ${p.city} as ${p.situation}.`, 700);
+
+  let data;
+  try {
+    const clean = raw.replace(/```json|```/g,'').trim();
+    data = JSON.parse(clean);
+  } catch(e) {
+    res.innerHTML = `<div class="result-box">${raw}</div>`;
+    return;
+  }
+
+  // ── FIX: Normalise amounts so they always sum to income ──
+  data.categories = normaliseBudgetCategories(data.categories || [], income);
+  const cats = data.categories;
+
+  // ── Result text ──
+  res.innerHTML = `<div class="result-box">🎯 ${data.goal_note}<br><br>📈 1 year: ${data.one_year}</div>`;
+
+  // ── Donut chart ──
+  const canvas = document.getElementById('budget-chart');
+  canvas.classList.remove('hidden');
+  if (bChart) bChart.destroy();
+  const isDark = !document.body.classList.contains('light');
+  bChart = new Chart(canvas, {
+    type:'doughnut',
+    data:{
+      labels: cats.map(c=>c.name),
+      datasets:[{ data: cats.map(c=>Math.max(c.amount,1)), backgroundColor:COLORS.slice(0,cats.length), borderWidth:2, borderColor:isDark?'#080808':'#f6f6f2' }]
+    },
+    options:{
+      plugins:{ legend:{ position:'bottom', labels:{ color:isDark?'#585858':'#aaa', font:{size:11}, boxWidth:11 }}},
+      cutout:'55%'
+    }
+  });
+
+  // ── Full budget list ──
+  const list = document.getElementById('budget-list');
+  list.classList.remove('hidden');
+  list.innerHTML = cats.map((c,i) => {
+    const clr = COLORS[i%COLORS.length];
+    return `
+      <div class="budget-row" style="border-left-color:${clr}">
+        <div style="flex:1;min-width:0">
+          <div class="budget-name">${c.name} <span class="budget-pct">${c.percentage}%</span></div>
+          <div class="budget-tip">${c.tip}</div>
+        </div>
+        <div class="budget-amt" style="color:${clr}">${fmtCompact(c.amount)}</div>
+      </div>`;
+  }).join('');
+
+  // ── Summary totals — verified against income ──
+  const totalShown = cats.reduce((s,c)=>s+c.amount, 0);
+  const investAmt  = cats.find(c=>/sip|invest/i.test(c.name))?.amount || 0;
+  const summary    = document.getElementById('budget-summary');
+  summary.classList.remove('hidden');
+
+  // Warn if there's still a discrepancy (shouldn't happen after normalise)
+  const diff = income - totalShown;
+  const diffNote = Math.abs(diff) > 1 
+    ? `<div style="font-size:.75rem;color:var(--warn);margin-top:8px">⚠️ Note: ₹${Math.abs(diff)} ${diff>0?'unallocated':'over-budget'} — adjust Emergency Buffer manually.</div>` 
+    : '';
+
+  summary.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="metric-card"><div class="metric-val">${fmtCompact(totalShown)}</div><div class="metric-lbl">Total allocated</div></div>
+      <div class="metric-card"><div class="metric-val green">${fmtCompact(investAmt)}</div><div class="metric-lbl">Going to investments</div></div>
+      <div class="metric-card"><div class="metric-val">${Math.round((investAmt/Math.max(totalShown,1))*100)}%</div><div class="metric-lbl">Investment ratio</div></div>
+    </div>
+    ${diffNote}`;
+}
+</script>
+</body>
+</html>

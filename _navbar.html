@@ -1,0 +1,47 @@
+<!-- UNIVERSAL NAVBAR — paste this into every page, replacing existing <nav> -->
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links" id="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<!-- Mobile nav overlay -->
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="roast.html">🔥 Roast</a>
+    <a href="fomo.html">🚦 FOMO Filter</a>
+    <a href="wealth.html">📈 Wealth Builder</a>
+    <a href="budget.html">📊 Budget</a>
+    <a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a>
+    <a href="mood.html">🧠 Mood</a>
+    <a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a>
+    <a href="blog.html">📝 Blog</a>
+    <a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>

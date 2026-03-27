@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — FOMO Filter</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:680px;margin:0 auto;padding:76px 40px 60px}
+.fomo-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.impact-card{background:var(--surf2);border-radius:var(--radius-sm);padding:14px 18px;margin-top:14px;border-left:3px solid var(--warn)}
+.verdict-card{border-radius:var(--radius);padding:18px 20px;margin-top:14px}
+.verdict-card.go{background:rgba(0,230,118,.07);border:2px solid var(--success)}
+.verdict-card.wait{background:rgba(255,204,0,.07);border:2px solid var(--warn)}
+.verdict-card.no{background:rgba(255,68,68,.07);border:2px solid var(--danger)}
+.v-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.go   .v-icon{background:rgba(0,230,118,.15)}
+.wait .v-icon{background:rgba(255,204,0,.15)}
+.no   .v-icon{background:rgba(255,68,68,.12)}
+.v-headline{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:8px}
+.go   .v-headline{color:var(--success)}
+.wait .v-headline{color:var(--warn)}
+.no   .v-headline{color:var(--danger)}
+.v-reason{font-size:.9rem;line-height:1.65;color:var(--text2);margin-bottom:10px}
+.v-alt{font-size:.82rem;color:var(--text3);border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+@media(max-width:640px){.wrap{padding:72px 14px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Loading FOMO check...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">FOMO Filter</h1>
+  </div>
+  <p class="body-md mb-16">About to spend? Describe what it is — you'll get a math-backed verdict, not a template.</p>
+
+  <div class="form-group">
+    <label>How much have you already spent this month? (₹)</label>
+    <div class="input-wrap"><span class="input-prefix">₹</span>
+      <input type="number" id="f-spent" class="form-control" value="5000" min="0" step="100" oninput="updateMetrics()"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>What do you want to spend on?
+      <span style="color:var(--text3);font-weight:400;font-size:.76rem"> — be specific, this changes the verdict</span>
+    </label>
+    <input type="text" id="f-item" class="form-control"
+           placeholder="e.g. college fees, new sneakers, grocery, concert tickets, medicine..."/>
+  </div>
+  <div class="form-group">
+    <label>Amount (₹)</label>
+    <div class="input-wrap"><span class="input-prefix">₹</span>
+      <input type="number" id="f-amt" class="form-control" value="500" min="1" step="50" oninput="updateMetrics()"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Why do you want this?</label>
+    <select id="f-why" class="form-control">
+      <option>Everyone around me is buying / doing it</option>
+      <option>I genuinely need this</option>
+      <option>It's on sale / limited time</option>
+      <option>Just bored and browsing</option>
+      <option>It'll make me happy (probably)</option>
+      <option>YOLO honestly</option>
+    </select>
+  </div>
+
+  <div class="fomo-metrics" id="fomo-metrics"></div>
+  <button class="btn btn-green btn-full" onclick="doFomo()">Should I spend this?</button>
+  <div id="fomo-result"></div>
+</div>
+<script src="app.js"></script>
+<script>
+function updateMetrics(){
+  const p=RR.profile,income=p?Math.max(p.income||0,0):0;
+  const spent=val('f-spent'),amt=val('f-amt'),rem=income-spent,after=rem-amt;
+  const inv2yr=Math.round(amt*1.12**2);
+  document.getElementById('fomo-metrics').innerHTML=`
+    <div class="metric-card"><div class="metric-val">${fmt(rem)}</div><div class="metric-lbl">Budget left</div></div>
+    <div class="metric-card"><div class="metric-val ${after<0?'pink':''}">${fmt(after)}</div><div class="metric-lbl">After spend</div></div>
+    <div class="metric-card"><div class="metric-val green">${fmt(inv2yr)}</div><div class="metric-lbl">If invested 2yr</div></div>`;
+}
+
+function doFomo(){
+  if(!requireProfile())return;
+  const item=strVal('f-item');
+  if(!item){alert('Please describe what you want to spend on!');return;}
+  const spent=val('f-spent'),amt=val('f-amt'),why=strVal('f-why');
+  const result=smartFomoEngine(item,amt,spent,why);
+  const res=document.getElementById('fomo-result');
+  const cls=result.verdict==='GO FOR IT'?'go':result.verdict==='WAIT A BIT'?'wait':'no';
+
+  /* SVG icons instead of emojis */
+  const icons={
+    go:`<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="rgba(0,230,118,.2)" stroke="var(--success)" stroke-width="1.5"/><path d="M6.5 10l2.5 2.5 4.5-5" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    wait:`<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="rgba(255,204,0,.15)" stroke="var(--warn)" stroke-width="1.5"/><path d="M10 6v5M10 13.5v.5" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"/></svg>`,
+    no:`<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" fill="rgba(255,68,68,.12)" stroke="var(--danger)" stroke-width="1.5"/><path d="M7 7l6 6M13 7l-6 6" stroke="var(--danger)" stroke-width="2" stroke-linecap="round"/></svg>`,
+  };
+
+  let impactHTML='';
+  if(result.delay_weeks>0){
+    impactHTML=`<div class="impact-card"><div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--warn);margin-bottom:4px">Goal Impact</div><div style="font-size:.92rem;font-weight:600">Delays your nearest goal by <span style="color:var(--warn)">${result.delay_weeks} week${result.delay_weeks!==1?'s':''}</span></div><div style="font-size:.78rem;color:var(--text3);margin-top:3px">You decide — worth it?</div></div>`;
+  }
+
+  res.innerHTML=`
+    <div class="verdict-card ${cls}">
+      <div class="v-icon">${icons[cls]}</div>
+      <div class="v-headline">${result.verdict} — ${result.headline}</div>
+      <div class="v-reason">${result.reason}</div>
+      ${result.alt?`<div class="v-alt">${result.alt}</div>`:''}
+    </div>
+    ${impactHTML}`;
+
+  if(cls!=='go')awardFomoBadge();
+  updateMetrics();
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ requireProfile(); injectNavbar('fomo'); updateMetrics(); });
+</script>
+</body>
+</html>

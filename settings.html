@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Settings</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:600px;margin:0 auto;padding:84px 40px 60px}
+.s-block{margin-bottom:32px}
+.s-block h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.profile-card{background:var(--surf2);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px}
+.profile-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.profile-row:last-child{border-bottom:none}
+.profile-label{color:var(--text3)}
+.profile-val{font-weight:600}
+.streak-display{background:linear-gradient(135deg,rgba(170,238,34,.08),rgba(255,32,112,.06));border:1.5px solid var(--green);border-radius:var(--radius);padding:18px 24px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+@media(max-width:640px){.wrap{padding:80px 16px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading settings...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Settings ⚙️</h1>
+  </div>
+
+  <!-- Streak display -->
+  <div class="streak-display">
+    <div style="font-size:2.2rem">🔥</div>
+    <div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.8rem;font-weight:800;color:var(--green);line-height:1" id="streak-big">0</div>
+      <div style="font-size:.82rem;color:var(--text3);margin-top:3px">day streak — keep logging daily to maintain it!</div>
+    </div>
+    <div style="margin-left:auto;text-align:right">
+      <div style="font-size:.72rem;color:var(--text3)">Badges earned</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;color:var(--pink)" id="badge-ct">0</div>
+    </div>
+  </div>
+
+  <!-- Theme -->
+  <div class="s-block">
+    <h3>Theme</h3>
+    <button class="btn btn-ghost btn-full" id="theme-big" onclick="toggleTheme()">Switch to ☀️ Light mode</button>
+  </div>
+
+  <!-- API Key -->
+  <div class="s-block">
+    <h3>AI API Key</h3>
+    <div class="form-group">
+      <label>OpenAI or Anthropic key (optional)</label>
+      <input type="password" id="api-input" class="form-control" placeholder="sk-... or sk-ant-..."/>
+    </div>
+    <p class="body-sm mb-12">Without a key, smart mock responses are used — enough for demo. Get key at <strong>platform.openai.com</strong></p>
+    <button class="btn btn-green" onclick="saveKey()" style="width:auto;min-width:140px">Save Key</button>
+    <div id="key-msg" class="body-sm mt-8"></div>
+  </div>
+
+  <!-- Profile -->
+  <div class="s-block">
+    <h3>Your Profile</h3>
+    <div class="profile-card" id="profile-display"></div>
+    <div class="grid-2">
+      <button class="btn btn-ghost" onclick="location.href='onboarding.html'">✏️ Edit Profile</button>
+      <button class="btn btn-ghost" style="color:var(--danger);border-color:var(--danger)" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </div>
+
+  <!-- About -->
+  <div class="s-block">
+    <h3>About</h3>
+    <div class="card">
+      <div class="display d-sm mb-8"><span style="color:var(--green)">Roast</span><span style="color:var(--pink)">&</span><span style="color:var(--green)">Rich</span></div>
+      <p class="body-sm">Roast first. Rich later.<br/>Protex Hackathon 2026 · Track 3: Personal Finance & Wealth<br/>For every Gen Z — school students to first jobbers.</p>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const key = RR.apiKey;
+  if (key) document.getElementById('api-input').value = key;
+
+  /* streak + badges */
+  document.getElementById('streak-big').textContent = getStreak();
+  checkBadges();
+  document.getElementById('badge-ct').textContent = RR.badges.length;
+
+  /* theme button */
+  const tb = document.getElementById('theme-big');
+  if (tb) tb.textContent = RR.theme==='dark'?'Switch to ☀️ Light mode':'Switch to 🌙 Dark mode';
+
+  /* profile */
+  const p = RR.profile;
+  const pd = document.getElementById('profile-display');
+  if (p) {
+    pd.innerHTML = `
+      <div class="profile-row"><span class="profile-label">Name</span><span class="profile-val">${p.name}</span></div>
+      <div class="profile-row"><span class="profile-label">Age</span><span class="profile-val">${p.age}</span></div>
+      <div class="profile-row"><span class="profile-label">City</span><span class="profile-val">${p.city}</span></div>
+      <div class="profile-row"><span class="profile-label">Situation</span><span class="profile-val">${p.situation}</span></div>
+      <div class="profile-row"><span class="profile-label">Monthly income</span><span class="profile-val green">${fmt(p.income)}</span></div>
+      <div class="profile-row"><span class="profile-label">Monthly savings</span><span class="profile-val green">${fmt(p.canSave)}</span></div>
+      <div class="profile-row"><span class="profile-label">Retire at</span><span class="profile-val">${p.retire}</span></div>
+      <div class="profile-row"><span class="profile-label">Goals</span><span class="profile-val">${(p.goals||[]).length} set</span></div>`;
+  } else {
+    pd.innerHTML = `<p class="body-sm">No profile yet. <a href="onboarding.html" style="color:var(--pink)">Set up →</a></p>`;
+  }
+});
+
+function saveKey() {
+  const v = document.getElementById('api-input').value.trim();
+  RR.apiKey = v;
+  const m = document.getElementById('key-msg');
+  m.textContent = v ? '✅ Key saved! AI features active.' : 'Key cleared.';
+  m.style.color = v ? 'var(--success)' : 'var(--text3)';
+}
+
+function doLogout() {
+  if (!confirm('Log out? Your profile and data will be cleared.')) return;
+  RR.logout();
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

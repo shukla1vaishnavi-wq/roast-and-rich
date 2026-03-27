@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>What is SIP? — Roast&Rich Blog</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading article...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link active" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a><a href="fomo.html">🚦 FOMO</a>
+    <a href="wealth.html">📈 Wealth</a><a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a><a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a><a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a><a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="blog-post-wrap">
+  <div class="blog-post-hero anim-fade-up">
+    <span class="blog-post-emoji">📈</span>
+    <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px">Investing Basics</div>
+    <h1 class="blog-post-title">SIP explained like you're 17 — no boring finance lecture</h1>
+    <div class="blog-post-meta">
+      <span>📅 2026</span>
+      <span>⏱ 5 min read</span>
+      <span>💰 Beginner-friendly</span>
+    </div>
+    <hr class="div"/>
+  </div>
+
+  <div class="blog-post-body anim-fade-up">
+
+    <p>Okay, real talk. You've heard the word "SIP" approximately 47 times from that one uncle at every family gathering. He says it like it's magic. And you nod like you understand, then go home and Google it and still don't get it.</p>
+
+    <p>Let's fix that right now. No jargon. Just plain English (and some Hindi).</p>
+
+    <h2>SIP = Systematic Investment Plan</h2>
+
+    <p>Translation: <strong>Put a fixed amount of money every month, automatically, into a mutual fund.</strong></p>
+
+    <p>That's it. That's literally SIP. You pick a number — could be ₹500, ₹1000, ₹5000 — and on a set date every month, it gets auto-deducted and invested. You don't even have to do anything.</p>
+
+    <div class="highlight">
+      🍕 <strong>Pizza analogy:</strong> Imagine your favourite pizza place has a "save ₹100 every month and we'll give you an extra-large pizza at the end of the year" deal. Every month ₹100 auto-goes. By month 12, you've put in ₹1200 — but thanks to the pizza deal, you now have something worth ₹1600. That extra ₹400 is basically compounding. SIP works the same way.
+    </div>
+
+    <h2>The math that will blow your mind</h2>
+
+    <p>Let's say you're 20 years old. You start a SIP of ₹1,000/month in a Nifty 50 index fund (average return ~12%/year).</p>
+
+    <p>By age 60, you would have invested:</p>
+    <span class="big-number">₹4.8 Lakh</span>
+    <p>But your actual corpus (the money you'd have)?</p>
+    <span class="big-number" style="color:var(--pink)">₹3.53 Crore 🤯</span>
+
+    <p>That ₹3.53 Crore came from investing ₹4.8 Lakh. The rest — ₹3.48 Crore — was made by <strong>your money making more money.</strong> That's compounding. That's the magic.</p>
+
+    <div class="callout-pink">
+      ⚠️ <strong>Wait 10 years and start at 30?</strong> Same ₹1000/month, same returns. You'd end up with ₹1.17 Crore. That 10-year delay cost you ₹2.36 Crore. Just by procrastinating.
+    </div>
+
+    <h2>How to actually start a SIP (step by step)</h2>
+
+    <ol>
+      <li><strong>Download any trusted investment app.</strong> — free, takes 10 minutes to sign up</li>
+      <li><strong>Complete KYC</strong> — just your Aadhaar + PAN, fully online</li>
+      <li><strong>Pick a Nifty 50 Index Fund</strong> — search "Nifty 50" and pick any Direct Growth option</li>
+      <li><strong>Set SIP amount</strong> — minimum ₹100 on most apps</li>
+      <li><strong>Set SIP date</strong> — pick the day after your salary/allowance comes in</li>
+      <li><strong>Forget about it</strong> — seriously, don't touch it for years</li>
+    </ol>
+
+    <h2>Common SIP myths — busted</h2>
+
+    <h3>Myth 1: "Market girra toh main SIP band karunga"</h3>
+    <p>This is the WORST thing you can do. When markets fall, your SIP buys MORE units at LOWER prices. A market crash is basically a sale on stocks. Don't stop buying on sale day.</p>
+
+    <h3>Myth 2: "I need a lot of money to start"</h3>
+    <p>₹100. That’s all it takes. Cheaper than a food-delivery fee. If you can order food, you can start investing.</p>
+
+    <h3>Myth 3: "I'll start next year when I earn more"</h3>
+    <p>Classic trap. The best time to start was last year. The second best time is today. Every month you delay is literally money you'll never get back.</p>
+
+    <div class="highlight">
+      🎯 <strong>Action step:</strong> Right now — not after this article, RIGHT NOW — open your investment app., search "Nifty 50 Index Fund", and set a ₹500 SIP. Takes 8 minutes. Your future self will send you a thank-you message.
+    </div>
+
+    <h2>TL;DR — SIP in one sentence</h2>
+    <p>Put a small fixed amount every month in a mutual fund, let compounding do its thing, and you'll have more money than you can imagine by the time you're 40. That's SIP. Start today.</p>
+
+  </div>
+
+  <div class="blog-nav">
+    <a href="blog.html" class="btn btn-ghost">← All Blogs</a>
+    <a href="blog-3.html" class="btn btn-pink">Next: What's your FIRE number? →</a>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

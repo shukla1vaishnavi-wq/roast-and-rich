@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Goals</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:1060px;margin:0 auto;padding:76px 40px 60px}
+/* Horizontal goal cards */
+.goals-list{display:flex;flex-direction:column;gap:14px;margin:20px 0}
+.goal-hcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;transition:border-color .2s}
+.goal-hcard.feasible{border-color:var(--green)}
+.goal-hcard.stretch{border-color:var(--warn)}
+.goal-icon-wrap{width:54px;height:54px;border-radius:14px;background:var(--surf2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.goal-body{min-width:0}
+.goal-title{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1rem;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.goal-meta{display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap}
+.goal-meta-item{font-size:.8rem;color:var(--text3)}
+.goal-meta-item strong{color:var(--text);font-weight:600}
+.goal-bar-row{display:flex;align-items:center;gap:10px}
+.goal-pbar-wrap{flex:1;background:var(--surf3);border-radius:4px;height:4px;overflow:hidden}
+.goal-pbar{height:4px;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--pink));transition:width .5s}
+.goal-pct{font-size:.72rem;color:var(--text3);white-space:nowrap}
+.goal-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0;align-items:flex-end}
+.goal-strategy{background:var(--surf2);border-left:3px solid var(--green);border-radius:0 var(--radius-xs) var(--radius-xs) 0;padding:12px 16px;margin-top:12px;font-size:.84rem;line-height:1.7;color:var(--text2);display:none}
+.goal-strategy.open{display:block}
+.remove-btn{font-size:.72rem;color:var(--danger);background:none;border:1px solid var(--danger);border-radius:var(--radius-xs);padding:4px 10px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.remove-btn:hover{background:var(--danger);color:#fff}
+/* Add modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-box{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
+.goal-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.gt-btn{border:1.5px solid var(--border2);border-radius:var(--radius-sm);padding:13px 10px;text-align:center;cursor:pointer;background:var(--surf2);transition:all .15s}
+.gt-btn:hover,.gt-btn.sel{border-color:var(--pink);background:var(--pink-dim)}
+.gt-label{font-size:.8rem;font-weight:600;margin-top:6px}
+/* Large-number formatting — overflow-safe */
+.goal-amount-display{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.05rem;font-weight:800;color:var(--green);word-break:break-word;max-width:180px;line-height:1.2}
+@media(max-width:700px){.goal-hcard{grid-template-columns:1fr;gap:12px}.goal-icon-wrap{width:42px;height:42px}.goal-actions{flex-direction:row;align-items:center}.wrap{padding:72px 14px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Loading goals...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Goal Tracker</h1>
+    <button class="btn btn-pink btn-sm" onclick="openModal()" style="margin-left:auto;width:auto">+ Add Goal</button>
+  </div>
+  <p class="body-md mb-4">Every big dream has a monthly number. Here's yours.</p>
+  <div id="goals-list-wrap"></div>
+  <div id="all-strat-wrap"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal" onclick="closeOnBg(event)">
+  <div class="modal-box">
+    <h2 style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;margin-bottom:18px">Add a new goal</h2>
+    <div class="form-group"><label>Goal type</label>
+      <div class="goal-type-grid" id="gt-grid">
+        <div class="gt-btn sel" data-v="Car/Bike" data-icon="car" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><rect x="2" y="10" width="24" height="10" rx="2.5" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.4"/><path d="M5 10l2-5h14l2 5" stroke="var(--pink)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="21" r="2.5" fill="var(--pink)"/><circle cx="20.5" cy="21" r="2.5" fill="var(--pink)"/></svg>
+          <div class="gt-label">Car / Bike</div>
+        </div>
+        <div class="gt-btn" data-v="House/Flat" data-icon="house" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><path d="M14 4L3 13h4v11h14V13h4L14 4z" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4" stroke-linejoin="round"/><rect x="10" y="18" width="8" height="6" rx="1" fill="var(--green)" opacity=".3"/></svg>
+          <div class="gt-label">House / Flat</div>
+        </div>
+        <div class="gt-btn" data-v="Dream Trip" data-icon="trip" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><path d="M3 18l4-4 7 2 8-10-3-1.5-5.5 7.5-3.5-1-1-3-2.5 1 1 4.5-3.5 1z" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.3" stroke-linejoin="round"/><path d="M3 22h22" stroke="var(--pink)" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <div class="gt-label">Dream Trip</div>
+        </div>
+        <div class="gt-btn" data-v="Gadget/Laptop" data-icon="gadget" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><rect x="3" y="5" width="22" height="14" rx="2" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4"/><path d="M3 21h22" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/><rect x="9" y="8.5" width="10" height="7" rx="1" fill="var(--green)" opacity=".25"/></svg>
+          <div class="gt-label">Gadget / Laptop</div>
+        </div>
+        <div class="gt-btn" data-v="Emergency Fund" data-icon="shield" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><path d="M14 3L4 8v7c0 5.5 4.3 9.5 10 11 5.7-1.5 10-5.5 10-11V8L14 3z" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4" stroke-linejoin="round"/><path d="M9.5 14l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="gt-label">Emergency Fund</div>
+        </div>
+        <div class="gt-btn" data-v="Other" data-icon="target" onclick="selType(this)">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="margin:0 auto;display:block"><circle cx="14" cy="14" r="10" stroke="var(--green)" stroke-width="1.4" fill="var(--green-dim)"/><circle cx="14" cy="14" r="6" stroke="var(--green)" stroke-width="1.1" fill="none"/><circle cx="14" cy="14" r="2.5" fill="var(--green)"/></svg>
+          <div class="gt-label">Other</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group hidden" id="custom-name-wrap">
+      <label>Goal name</label>
+      <input type="text" id="g-custom" class="form-control" placeholder="e.g. MBA fees, Wedding fund..."/>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Target amount (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-amt" class="form-control green-focus" value="100000" min="100" step="5000" oninput="updateCalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label>In how many years?</label>
+        <input type="number" id="g-yrs" class="form-control green-focus" value="3" min="1" max="30" oninput="updateCalc()"/>
+      </div>
+    </div>
+    <div id="g-calc" class="body-sm mt-8" style="font-weight:600;margin-bottom:16px"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal()" style="flex:1">Cancel</button>
+      <button class="btn btn-pink" onclick="saveGoal()" style="flex:2">Add Goal</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let selGoalType={v:'Car/Bike',icon:'car'};
+
+const ICON_SVGS={
+  car:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="10" width="24" height="10" rx="2.5" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.4"/><path d="M5 10l2-5h14l2 5" stroke="var(--pink)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="21" r="2.5" fill="var(--pink)"/><circle cx="20.5" cy="21" r="2.5" fill="var(--pink)"/></svg>`,
+  house:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4L3 13h4v11h14V13h4L14 4z" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4" stroke-linejoin="round"/><rect x="10" y="18" width="8" height="6" rx="1" fill="var(--green)" opacity=".3"/></svg>`,
+  trip:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M3 18l4-4 7 2 8-10-3-1.5-5.5 7.5-3.5-1-1-3-2.5 1 1 4.5-3.5 1z" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.3" stroke-linejoin="round"/><path d="M3 22h22" stroke="var(--pink)" stroke-width="1.4" stroke-linecap="round"/></svg>`,
+  gadget:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="5" width="22" height="14" rx="2" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4"/><path d="M3 21h22" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/><rect x="9" y="8.5" width="10" height="7" rx="1" fill="var(--green)" opacity=".25"/></svg>`,
+  shield:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3L4 8v7c0 5.5 4.3 9.5 10 11 5.7-1.5 10-5.5 10-11V8L14 3z" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4" stroke-linejoin="round"/><path d="M9.5 14l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  target:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" stroke="var(--green)" stroke-width="1.4" fill="var(--green-dim)"/><circle cx="14" cy="14" r="6" stroke="var(--green)" stroke-width="1.1" fill="none"/><circle cx="14" cy="14" r="2.5" fill="var(--green)"/></svg>`,
+};
+
+function selType(el){
+  document.querySelectorAll('.gt-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  selGoalType={v:el.dataset.v,icon:el.dataset.icon};
+  document.getElementById('custom-name-wrap').classList.toggle('hidden',el.dataset.v!=='Other');
+  updateCalc();
+}
+function updateCalc(){
+  const amt=parseFloat(document.getElementById('g-amt').value)||0;
+  const yrs=parseFloat(document.getElementById('g-yrs').value)||1;
+  const pm=Math.round(amt/(yrs*12));
+  const p=RR.profile,feasible=p&&pm<=(p.canSave||0);
+  const el=document.getElementById('g-calc');
+  el.textContent=`Save ${fmt(pm)}/month for ${yrs} year${yrs!==1?'s':''}`;
+  el.style.color=feasible?'var(--green)':'var(--warn)';
+  if(p&&!feasible&&pm>0)el.textContent+=` — ₹${(pm-(p.canSave||0)).toLocaleString('en-IN')}/mo above current capacity`;
+}
+function openModal(){document.getElementById('modal').classList.remove('hidden');updateCalc();}
+function closeModal(){document.getElementById('modal').classList.add('hidden');}
+function closeOnBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+function saveGoal(){
+  const amt=parseFloat(document.getElementById('g-amt').value)||0;
+  const yrs=parseInt(document.getElementById('g-yrs').value)||1;
+  if(amt<100){alert('Please enter a valid amount.');return;}
+  const name=selGoalType.v==='Other'?(document.getElementById('g-custom').value.trim()||'Other Goal'):selGoalType.v;
+  const p=RR.profile;if(!p)return;
+  p.goals=p.goals||[]; p.goals.push({name,icon:selGoalType.icon,amount:amt,years:yrs});
+  RR.profile=p; closeModal(); renderGoals();
+}
+
+const COLORS=['#aaee22','#ff2070','#00e5ff','#ffd600','#ff6b35','#b44aff','#00e676'];
+
+function renderGoals(){
+  const p=softRequire(),wrap=document.getElementById('goals-list-wrap');
+  if(!p){wrap.innerHTML=`<div class="card" style="text-align:center;padding:40px"><p class="body-md mb-16">Set up your profile first.</p><button class="btn btn-pink" onclick="location.href='onboarding.html'">Set up profile</button></div>`;return;}
+  if(!p.goals||p.goals.length===0){
+    wrap.innerHTML=`<div class="card" style="text-align:center;padding:40px"><p class="body-md mb-16">No goals yet. Click "+ Add Goal" to start.</p></div>`;
+    document.getElementById('all-strat-wrap').innerHTML='';return;
+  }
+  wrap.innerHTML=`<div class="goals-list">${p.goals.map((g,i)=>{
+    const pm=g.amount/(g.years*12);
+    const pct=Math.min(100,Math.round(((p.canSave||0)/Math.max(pm,.01))*100));
+    const ok=pm<=(p.canSave||0);
+    const clr=COLORS[i%COLORS.length];
+    const iconSvg=ICON_SVGS[g.icon]||ICON_SVGS.target;
+    /* Large number formatting */
+    const amtDisplay=fmtShort(g.amount);
+    return `
+      <div class="goal-hcard ${ok?'feasible':'stretch'}">
+        <div class="goal-icon-wrap">${iconSvg}</div>
+        <div class="goal-body">
+          <div class="goal-title">
+            ${g.name}
+            <span class="badge ${ok?'badge-green':'badge-warn'}" style="font-size:.65rem">${ok?'Feasible':'Stretch'}</span>
+          </div>
+          <div class="goal-meta">
+            <div class="goal-meta-item">Target: <strong class="goal-amount-display">${amtDisplay}</strong></div>
+            <div class="goal-meta-item">Timeline: <strong>${g.years} yr${g.years!==1?'s':''}</strong></div>
+            <div class="goal-meta-item">Need: <strong style="color:${clr}">${fmt(Math.round(pm))}/mo</strong></div>
+          </div>
+          <div class="goal-bar-row">
+            <div class="goal-pbar-wrap"><div class="goal-pbar" style="width:${pct}%"></div></div>
+            <div class="goal-pct">${pct}% covered</div>
+          </div>
+          <div class="goal-strategy" id="gs-${i}"></div>
+        </div>
+        <div class="goal-actions">
+          <button class="btn btn-ghost btn-sm" onclick="getStrategy(${i})" style="font-size:.75rem">Strategy</button>
+          <button class="remove-btn" onclick="removeGoal(${i})">Remove this goal</button>
+        </div>
+      </div>`;
+  }).join('')}</div>`;
+  document.getElementById('all-strat-wrap').innerHTML=`<button class="btn btn-green btn-full" onclick="getAllStrategy()">Overall strategy for all goals</button><div id="all-strat-result" style="margin-top:8px"></div>`;
+}
+
+function removeGoal(i){
+  if(!confirm('Remove this goal?'))return;
+  const p=RR.profile;p.goals.splice(i,1);RR.profile=p;renderGoals();
+}
+
+async function getStrategy(i){
+  const p=RR.profile,g=p.goals[i];
+  const el=document.getElementById('gs-'+i);
+  el.classList.add('open');showLoading(el);
+  const pm=Math.round(g.amount/(g.years*12)),gap=pm-(p.canSave||0);
+  const text=await callAI(`${profileStr()}
+Goal: ${g.name} | Target: ${fmt(g.amount)} | ${g.years} years | Monthly needed: ${fmt(pm)}
+Savings: ${fmt(p.canSave||0)} | Gap: ${gap>0?fmt(gap)+' shortage':'Sufficient'}
+Give a 3-point strategy for this goal. Include: exact monthly amount, best vehicle for this timeline (no ELSS — use PPF/NPS/index fund/liquid fund/RD), one creative tip.
+Pronoun: ${pronoun(p)}. Hinglish ok. Under 130 words.`,260);
+  el.innerHTML=text.replace(/\n/g,'<br>');
+}
+
+async function getAllStrategy(){
+  const p=RR.profile,res=document.getElementById('all-strat-result');
+  showLoading(res);
+  const text=await callAI(`${profileStr()}
+Prioritised strategy for all goals simultaneously. Specific: which first, how to split ${fmt(p.canSave||0)}/month, timeline conflicts. No ELSS — use index funds, PPF, NPS, liquid funds, RD. Pronoun: ${pronoun(p)}. Under 150 words.`,300);
+  res.innerHTML=`<div class="result-box">${text.replace(/\n/g,'<br>')}</div>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  requireProfile();injectNavbar('goals');renderGoals();
+  document.getElementById('g-amt').addEventListener('input',updateCalc);
+  document.getElementById('g-yrs').addEventListener('input',updateCalc);
+});
+</script>
+</body>
+</html>

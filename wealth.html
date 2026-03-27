@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Wealth Builder</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:860px;margin:0 auto;padding:76px 40px 60px}
+.wealth-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:24px;align-items:start}
+.controls{display:flex;flex-direction:column;gap:0}
+.corpus-display{background:linear-gradient(135deg,rgba(170,238,34,.08),rgba(255,32,112,.06));border:2px solid var(--green);border-radius:var(--radius);padding:24px;margin-bottom:16px;text-align:center}
+.corpus-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.4rem;font-weight:800;color:var(--green);line-height:1}
+.corpus-lbl{font-size:.78rem;color:var(--text3);margin-top:6px}
+/* Already-saved note */
+.saved-note{background:var(--surf2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:.82rem;color:var(--text2)}
+.saved-note-icon{width:20px;height:20px;border-radius:50%;background:var(--green-dim);border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.insight-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.sip-tip{background:var(--surf2);border-radius:var(--radius-sm);padding:14px;font-size:.84rem;line-height:1.6;color:var(--text2)}
+@media(max-width:860px){.wealth-grid{grid-template-columns:1fr}}
+@media(max-width:640px){.wrap{padding:72px 14px 60px}.insight-strip{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Building your wealth curve...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Wealth Builder</h1>
+  </div>
+  <p class="body-md mb-16">See your money grow from today to retirement. Every slider changes the future.</p>
+  <div class="wealth-grid">
+    <!-- Controls -->
+    <div class="controls">
+      <div class="form-group">
+        <div class="range-row"><label>Monthly SIP / investment (₹)</label><span class="range-val" id="sip-show">₹2,000</span></div>
+        <input type="range" id="sip" min="100" max="50000" value="2000" step="100" oninput="update()"/>
+      </div>
+      <div class="form-group">
+        <div class="range-row"><label>Expected annual return (%)</label><span class="range-val" id="rate-show">12%</span></div>
+        <input type="range" id="rate" min="6" max="18" value="12" step="0.5" oninput="update()"/>
+      </div>
+      <div class="form-group">
+        <div class="range-row"><label>Investment period (years)</label><span class="range-val" id="yrs-show">30 yrs</span></div>
+        <input type="range" id="yrs" min="1" max="40" value="30" oninput="update()"/>
+      </div>
+      <div class="form-group">
+        <div class="range-row"><label>Already saved / invested today (₹)</label><span class="range-val" id="saved-show">₹0</span></div>
+        <input type="range" id="saved" min="0" max="1000000" value="0" step="5000" oninput="update()"/>
+      </div>
+
+      <!-- Corpus display -->
+      <div class="corpus-display">
+        <div class="corpus-lbl">Your projected corpus</div>
+        <div class="corpus-num" id="corpus-val">—</div>
+        <div class="corpus-lbl" id="corpus-sub"></div>
+      </div>
+
+      <!-- Already-saved indicator — always visible when saved > 0 -->
+      <div class="saved-note" id="saved-note" style="display:none">
+        <div class="saved-note-icon">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <circle cx="6" cy="6" r="5" stroke="var(--green)" stroke-width="1.2"/>
+            <path d="M6 3.5v3M6 8v.5" stroke="var(--green)" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span id="saved-note-text"></span>
+      </div>
+
+      <div class="insight-strip" id="insight-strip"></div>
+
+      <!-- SIP advice — no ELSS -->
+      <div class="sip-tip">
+        <strong>Where to invest:</strong><br/>
+        <strong>1–3 years:</strong> Recurring Deposit or Liquid Fund — safe, accessible<br/>
+        <strong>3–7 years:</strong> Index Fund (Nifty 50) or Balanced Fund<br/>
+        <strong>7+ years:</strong> Equity SIP — Nifty 50 Index Fund for best long-term returns<br/>
+        <strong>Tax savings:</strong> PPF (7.1% guaranteed + 80C benefit) or NPS (pension + tax)<br/><br/>
+        Start on any trusted investment platform. Set SIP date = salary date + 1. Automate and forget.
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div>
+      <div class="chart-wrap"><canvas id="wealth-chart"></canvas></div>
+      <div style="font-size:.75rem;color:var(--text3);margin-top:8px;text-align:center">
+        Year-by-year corpus projection at selected return rate
+      </div>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+let wChart=null;
+
+function update(){
+  const sipV =parseInt(document.getElementById('sip').value)||0;
+  const rateV =parseFloat(document.getElementById('rate').value)||12;
+  const yrsV  =parseInt(document.getElementById('yrs').value)||10;
+  const savedV=parseInt(document.getElementById('saved').value)||0;
+
+  document.getElementById('sip-show').textContent  ='₹'+sipV.toLocaleString('en-IN');
+  document.getElementById('rate-show').textContent = rateV+'%';
+  document.getElementById('yrs-show').textContent  = yrsV+' yrs';
+  document.getElementById('saved-show').textContent='₹'+savedV.toLocaleString('en-IN');
+
+  /* Build year-by-year data */
+  const labels=[],corpusData=[],investedData=[];
+  for(let y=0;y<=yrsV;y++){
+    labels.push('Yr '+y);
+    const c=calcCorpus(sipV,savedV,y,rateV/100);
+    corpusData.push(Math.round(c));
+    investedData.push(Math.round(sipV*y*12+savedV));
+  }
+  const finalCorpus=corpusData[corpusData.length-1];
+  const totalInvested=investedData[investedData.length-1];
+  const gain=finalCorpus-totalInvested;
+
+  document.getElementById('corpus-val').textContent=fmtShort(finalCorpus);
+  document.getElementById('corpus-sub').textContent=`in ${yrsV} year${yrsV!==1?'s':''} at ${rateV}% return`;
+
+  /* Already-saved note */
+  const note=document.getElementById('saved-note');
+  const noteText=document.getElementById('saved-note-text');
+  if(savedV>0){
+    note.style.display='flex';
+    const fromSaved=Math.round(savedV*((1+rateV/100)**yrsV));
+    noteText.textContent=`Includes your already-saved ₹${savedV.toLocaleString('en-IN')}, which grows to ₹${fromSaved.toLocaleString('en-IN')} on its own. The rest comes from your monthly ₹${sipV.toLocaleString('en-IN')} SIP.`;
+  }else{
+    note.style.display='none';
+  }
+
+  /* Insight strip */
+  document.getElementById('insight-strip').innerHTML=`
+    <div class="metric-card"><div class="metric-val">${fmtShort(totalInvested)}</div><div class="metric-lbl">Total invested</div></div>
+    <div class="metric-card"><div class="metric-val">${fmtShort(gain)}</div><div class="metric-lbl">Returns gained</div></div>
+    <div class="metric-card"><div class="metric-val" style="color:var(--pink)">${Math.round(gain/Math.max(totalInvested,1)*100)}x</div><div class="metric-lbl">Money multiplied</div></div>`;
+
+  /* Chart */
+  const isDark=!document.body.classList.contains('light');
+  const textColor=isDark?'#585858':'#aaa';
+  const gridColor=isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.05)';
+  if(wChart)wChart.destroy();
+  wChart=new Chart(document.getElementById('wealth-chart'),{
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Corpus value',data:corpusData,borderColor:'#aaee22',backgroundColor:'rgba(170,238,34,.07)',tension:.4,fill:true,borderWidth:2.5,pointRadius:0,pointHoverRadius:5},
+        {label:'Amount invested',data:investedData,borderColor:'#ff2070',backgroundColor:'rgba(255,32,112,.05)',tension:.4,fill:true,borderWidth:1.8,borderDash:[5,5],pointRadius:0,pointHoverRadius:4},
+      ]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{labels:{color:textColor,font:{size:11},boxWidth:14}},
+        tooltip:{callbacks:{label:ctx=>`₹${ctx.raw.toLocaleString('en-IN')}`}}},
+      scales:{
+        x:{ticks:{color:textColor,font:{size:11},maxTicksLimit:8},grid:{color:gridColor}},
+        y:{ticks:{color:textColor,font:{size:11},callback:v=>fmtShort(v)},grid:{color:gridColor}},
+      }
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  requireProfile();
+  injectNavbar('wealth');
+  const p=RR.profile;
+  if(p){
+    const yrs=Math.max((p.retire||55)-(p.age||20),1);
+    document.getElementById('sip').value=Math.max(p.canSave||500,100);
+    document.getElementById('yrs').value=Math.min(yrs,40);
+    document.getElementById('saved').value=Math.min(p.saved||0,1000000);
+  }
+  update();
+});
+</script>
+</body>
+</html>

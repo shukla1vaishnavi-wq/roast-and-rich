@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Mood Tracker</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:720px;margin:0 auto;padding:76px 40px 60px}
+.mood-check{background:var(--surface);border:1.5px solid var(--pink);border-radius:var(--radius);padding:22px;margin-bottom:20px}
+.mood-check.done{border-color:var(--green)}
+/* Mood rating with SVG faces */
+.rating-row{display:flex;gap:8px;margin:10px 0}
+.rating-btn{flex:1;padding:10px 4px;background:var(--surf2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;text-align:center;transition:all .15s;line-height:1}
+.rating-btn:hover{border-color:var(--pink);background:var(--pink-dim)}
+.rating-btn.selected{border-color:var(--pink);background:var(--pink-dim)}
+.rating-btn svg{display:block;margin:0 auto 5px}
+.rating-lbl{font-size:.65rem;color:var(--text3);font-weight:500}
+/* Yes/No toggle */
+.toggle-row{display:flex;gap:10px;margin:8px 0}
+.toggle-opt{flex:1;padding:10px;background:var(--surf2);border:1.5px solid var(--border2);border-radius:var(--radius-sm);cursor:pointer;font-size:.85rem;font-weight:600;text-align:center;transition:all .15s;color:var(--text2);display:flex;align-items:center;justify-content:center;gap:7px}
+.toggle-opt.yes{border-color:var(--success);background:rgba(0,230,118,.08);color:var(--success)}
+.toggle-opt.no{border-color:var(--danger);background:rgba(255,68,68,.08);color:var(--danger)}
+.insight-box{background:var(--surf2);border-left:3px solid var(--green);border-radius:0 12px 12px 0;padding:14px 18px;margin-bottom:10px;font-size:.9rem;line-height:1.65}
+.mood-history{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.mood-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-xs);padding:10px 14px}
+.mood-date{font-size:.72rem;color:var(--text3);width:80px;flex-shrink:0}
+.mood-face{width:26px;height:26px;flex-shrink:0}
+.mood-note{font-size:.82rem;color:var(--text2);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:640px){.wrap{padding:72px 14px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Loading mood tracker...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Mood Tracker</h1>
+  </div>
+  <p class="body-md mb-16">Daily 2-minute check-in. Over time, patterns emerge that explain your spending behaviour.</p>
+
+  <div class="mood-check" id="mood-card">
+    <div class="label-cap mb-8" id="mood-date-lbl">Today's check-in</div>
+
+    <div class="form-group" style="margin-bottom:12px">
+      <label>How do you feel about your money situation today?</label>
+      <div class="rating-row" id="rating-row">
+        <!-- SVG faces, no emojis -->
+        <button class="rating-btn" data-v="1" onclick="selectRating(1)">
+          <svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--danger)" stroke-width="1.5" fill="rgba(255,68,68,.08)"/><circle cx="9.5" cy="11" r="1.5" fill="var(--danger)"/><circle cx="16.5" cy="11" r="1.5" fill="var(--danger)"/><path d="M9 17.5c1.3-1.8 6.7-1.8 8 0" stroke="var(--danger)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <div class="rating-lbl">Stressed</div>
+        </button>
+        <button class="rating-btn" data-v="2" onclick="selectRating(2)">
+          <svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--warn)" stroke-width="1.5" fill="rgba(255,204,0,.08)"/><circle cx="9.5" cy="11" r="1.5" fill="var(--warn)"/><circle cx="16.5" cy="11" r="1.5" fill="var(--warn)"/><path d="M9.5 17c1.2-1 5.8-1 7 0" stroke="var(--warn)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <div class="rating-lbl">Worried</div>
+        </button>
+        <button class="rating-btn" data-v="3" onclick="selectRating(3)">
+          <svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--text3)" stroke-width="1.5" fill="var(--surf3)"/><circle cx="9.5" cy="11" r="1.5" fill="var(--text3)"/><circle cx="16.5" cy="11" r="1.5" fill="var(--text3)"/><path d="M9.5 16.5h7" stroke="var(--text3)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <div class="rating-lbl">Neutral</div>
+        </button>
+        <button class="rating-btn" data-v="4" onclick="selectRating(4)">
+          <svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--green)" stroke-width="1.5" fill="var(--green-dim)"/><circle cx="9.5" cy="11" r="1.5" fill="var(--green)"/><circle cx="16.5" cy="11" r="1.5" fill="var(--green)"/><path d="M9 15c1.5 2 7.5 2 9 0" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <div class="rating-lbl">Good</div>
+        </button>
+        <button class="rating-btn" data-v="5" onclick="selectRating(5)">
+          <svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--green)" stroke-width="1.8" fill="var(--green-dim)"/><circle cx="9.5" cy="10.5" r="1.8" fill="var(--green)"/><circle cx="16.5" cy="10.5" r="1.8" fill="var(--green)"/><path d="M8.5 14.5c1.2 3 7.8 3 9 0" stroke="var(--green)" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+          <div class="rating-lbl">Great</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:12px">
+      <label>Did you regret any purchase today?</label>
+      <div class="toggle-row">
+        <button class="toggle-opt" id="reg-yes" onclick="selectToggle('regret',true)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Yes, I did
+        </button>
+        <button class="toggle-opt" id="reg-no" onclick="selectToggle('regret',false)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          No regrets
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:12px">
+      <label>Did you save money today?</label>
+      <div class="toggle-row">
+        <button class="toggle-opt" id="sav-yes" onclick="selectToggle('saved',true)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Yes, saved
+        </button>
+        <button class="toggle-opt" id="sav-no" onclick="selectToggle('saved',false)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Not today
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:16px">
+      <label>Quick note (optional)</label>
+      <input type="text" id="mood-note" class="form-control" placeholder="e.g. impulse buy, stuck to budget, stressed about exams..."/>
+    </div>
+
+    <button class="btn btn-pink btn-full" id="submit-btn" onclick="submitMood()">Save Today's Check-in</button>
+    <div id="mood-msg" style="margin-top:8px"></div>
+  </div>
+
+  <div id="insight-wrap"></div>
+  <button class="btn btn-ghost mt-12" id="ai-btn" onclick="getAIInsight()" style="width:auto;display:none">Get deeper pattern analysis</button>
+  <div id="ai-insight" style="margin-top:8px"></div>
+
+  <div class="label-cap mt-24 mb-8">Your mood history</div>
+  <div class="mood-history" id="mood-history"></div>
+</div>
+<script src="app.js"></script>
+<script>
+let selR=0,selRegret=null,selSaved=null;
+/* SVG face mini for history */
+const FACE_SVG={
+  1:`<svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--danger)" stroke-width="1.5" fill="rgba(255,68,68,.08)"/><path d="M9 17.5c1.3-1.8 6.7-1.8 8 0" stroke="var(--danger)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  2:`<svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--warn)" stroke-width="1.5" fill="rgba(255,204,0,.08)"/><path d="M9.5 17c1.2-1 5.8-1 7 0" stroke="var(--warn)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  3:`<svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--text3)" stroke-width="1.5" fill="var(--surf3)"/><path d="M9.5 16.5h7" stroke="var(--text3)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  4:`<svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--green)" stroke-width="1.5" fill="var(--green-dim)"/><path d="M9 15c1.5 2 7.5 2 9 0" stroke="var(--green)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>`,
+  5:`<svg class="mood-face" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="11" stroke="var(--green)" stroke-width="1.8" fill="var(--green-dim)"/><path d="M8.5 14.5c1.2 3 7.8 3 9 0" stroke="var(--green)" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+};
+
+function selectRating(v){
+  selR=v;
+  document.querySelectorAll('.rating-btn').forEach(b=>b.classList.toggle('selected',parseInt(b.dataset.v)===v));
+}
+function selectToggle(type,v){
+  if(type==='regret'){
+    selRegret=v;
+    document.getElementById('reg-yes').className='toggle-opt '+(v?'yes':'');
+    document.getElementById('reg-no').className='toggle-opt '+(!v?'no':'');
+  }else{
+    selSaved=v;
+    document.getElementById('sav-yes').className='toggle-opt '+(v?'yes':'');
+    document.getElementById('sav-no').className='toggle-opt '+(!v?'no':'');
+  }
+}
+
+function submitMood(){
+  if(!selR){alert('Please select your mood rating!');return;}
+  if(selRegret===null){alert('Please answer the regret question!');return;}
+  if(selSaved===null){alert('Please answer the savings question!');return;}
+  saveMoodEntry(selR,selRegret,selSaved,strVal('mood-note'));
+  document.getElementById('mood-msg').innerHTML=`<div style="color:var(--success);font-size:.88rem;font-weight:600;margin-top:4px">Saved! Come back tomorrow.</div>`;
+  document.getElementById('submit-btn').textContent='Already logged today';
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('mood-card').classList.add('done');
+  renderHistory();renderInsight();
+}
+
+function renderInsight(){
+  const ins=getMoodInsight(),wrap=document.getElementById('insight-wrap');
+  if(ins){wrap.innerHTML=`<div class="insight-box">${ins}</div>`;document.getElementById('ai-btn').style.display='block';}
+  else{wrap.innerHTML=`<div class="insight-box" style="border-left-color:var(--text3)">Log 3+ days to see AI pattern insights here.</div>`;}
+}
+
+function renderHistory(){
+  const log=RR.moodLog.slice().reverse(),hist=document.getElementById('mood-history');
+  if(log.length===0){hist.innerHTML=`<div class="body-sm" style="color:var(--text3);padding:8px 0">No entries yet. Log today above!</div>`;return;}
+  hist.innerHTML=log.map(l=>{
+    const d=new Date(l.date+'T12:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',weekday:'short'});
+    return`<div class="mood-row">
+      <div class="mood-date">${d}</div>
+      <div class="mood-face">${FACE_SVG[l.rating]||FACE_SVG[3]}</div>
+      <div class="mood-note">${l.note||'No note'}</div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        ${l.regret?'<span class="badge badge-danger">regret</span>':''}
+        ${l.saved?'<span class="badge badge-green">saved</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function getAIInsight(){
+  const res=document.getElementById('ai-insight');showLoading(res);
+  const log=RR.moodLog.slice(-14),avg=(log.reduce((s,l)=>s+l.rating,0)/Math.max(log.length,1)).toFixed(1);
+  const regD=log.filter(l=>l.regret).length,savD=log.filter(l=>l.saved).length;
+  const notes=log.filter(l=>l.note).map(l=>l.note).join(' | ')||'none';
+  const text=await callAI(`${profileStr()}
+Mood log (last ${log.length} days): avg ${avg}/5, regret ${regD} days, saved ${savD} days.
+Notes: ${notes}
+Give 2-3 specific behavioral finance insights about this person's emotional spending patterns.
+Address ${pronoun(RR.profile||{})} directly. Hinglish ok. Under 120 words. Specific, not generic.`,240);
+  res.innerHTML=`<div class="insight-box" style="border-left-color:var(--pink)">${text.replace(/\n/g,'<br>')}</div>`;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  requireProfile();injectNavbar('mood');
+  const now=new Date();
+  document.getElementById('mood-date-lbl').textContent=
+    `Today — ${now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'})}`;
+  if(RR.moodLog.some(l=>l.date===today())){
+    document.getElementById('submit-btn').textContent='Already logged today';
+    document.getElementById('submit-btn').disabled=true;
+    document.getElementById('mood-card').classList.add('done');
+  }
+  renderHistory();renderInsight();
+});
+</script>
+</body>
+</html>

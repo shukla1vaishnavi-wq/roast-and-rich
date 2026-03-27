@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Setup</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+body { background: var(--bg); }
+.ob-wrap { max-width: 640px; margin: 0 auto; padding: 100px 24px 60px; }
+.ob-header { margin-bottom: 40px; }
+.ob-step { display: none; }
+.ob-step.active { display: block; animation: fadeUp .3s ease; }
+
+/* gender cards bigger on desktop */
+.gender-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+.gender-card { border: 1.5px solid var(--border2); border-radius: var(--radius); padding: 24px 16px; text-align: center; cursor: pointer; transition: all .15s; }
+.gender-card:hover { border-color: var(--border3); transform: translateY(-2px); }
+.gender-card.selected { border-color: var(--pink); background: var(--pink-dim); box-shadow: var(--shadow-pink); }
+.gender-card .g-icon { font-size: 2.2rem; margin-bottom: 10px; }
+.gender-card .g-label { font-size: .95rem; font-weight: 700; margin-bottom: 4px; }
+.gender-card .g-desc { font-size: .78rem; color: var(--text3); line-height: 1.5; }
+
+/* situation cards */
+.sit-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+.sit-card { border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 14px 12px; text-align: center; cursor: pointer; transition: all .15s; }
+.sit-card:hover { border-color: var(--border3); }
+.sit-card.selected { border-color: var(--green); background: var(--green-dim); }
+.sit-card .s-icon { font-size: 1.5rem; margin-bottom: 6px; }
+.sit-card .s-label { font-size: .82rem; font-weight: 600; }
+
+/* vibe cards */
+.vibe-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 24px; }
+.vibe-card { border: 1.5px solid var(--border2); border-radius: var(--radius-sm); padding: 16px; cursor: pointer; transition: all .15s; }
+.vibe-card:hover { border-color: var(--border3); }
+.vibe-card.selected { border-color: var(--pink); background: var(--pink-dim); }
+.vibe-card .v-title { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+.vibe-card .v-desc { font-size: .78rem; color: var(--text3); }
+
+/* goal toggle cards */
+.goal-card { border: 1.5px solid var(--border2); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; transition: border-color .15s; }
+.goal-card.active { border-color: var(--green); background: var(--green-dim); }
+.goal-card-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.goal-card-body { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+.goal-card.active .goal-card-body { display: block; }
+.toggle-switch { width: 44px; height: 24px; background: var(--surf3); border-radius: 12px; position: relative; transition: background .15s; }
+.toggle-switch.on { background: var(--green); }
+.toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: left .15s; }
+.toggle-switch.on::after { left: 23px; }
+
+/* nav buttons fixed bottom */
+.ob-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-top: 1px solid var(--border); padding: 16px 24px; z-index: 100; }
+.ob-nav-inner { max-width: 640px; margin: 0 auto; display: flex; gap: 12px; align-items: center; }
+.ob-nav-inner .step-info { font-size: .82rem; color: var(--text3); flex-shrink: 0; }
+
+@media(max-width:600px){
+  .gender-grid { grid-template-columns: repeat(2,1fr); }
+  .sit-grid { grid-template-columns: repeat(2,1fr); }
+  .vibe-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Setting you up...</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div style="font-size:.85rem;color:var(--text3)">Setting up your profile</div>
+    <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+    <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+  </div>
+</nav>
+
+<div class="ob-wrap">
+  <div class="ob-header">
+    <div class="step-dots" id="step-dots">
+      <div class="sdot active" id="dot-1"></div>
+      <div class="sdot" id="dot-2"></div>
+      <div class="sdot" id="dot-3"></div>
+      <span class="body-sm" style="margin-left:8px" id="step-label">Step 1 of 3</span>
+    </div>
+  </div>
+
+  <!-- ── STEP 1 ── -->
+  <div class="ob-step active" id="step-1">
+    <h2 class="display d-lg mb-8">Who are you?</h2>
+    <p class="body-md mb-16">Takes 2 minutes. Asked only once. Everything after is personalised.</p>
+
+    <div class="form-group">
+      <label>Your name</label>
+      <input type="text" id="ob-name" class="form-control" placeholder="e.g. Priya, Aryan..." autocomplete="off"/>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="ob-age" class="form-control" value="20" min="13" max="40"/>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <select id="ob-city" class="form-control">
+          <option>Delhi</option><option>Noida / Gurugram</option><option>Mumbai</option>
+          <option>Pune</option><option>Bangalore</option><option>Hyderabad</option>
+          <option>Chennai</option><option>Kolkata</option><option>Jaipur</option>
+          <option>Lucknow</option><option>Chandigarh</option><option>Ahmedabad</option>
+          <option>Bhopal</option><option>Indore</option><option>Nagpur</option>
+          <option>Kochi</option><option>Coimbatore</option><option>Surat</option>
+          <option>Visakhapatnam</option><option>Patna</option><option>Other city</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label style="margin-bottom:12px">I identify as</label>
+      <div class="gender-grid">
+        <div class="gender-card selected" data-val="male" onclick="selectGender(this)">
+          <div class="g-icon">👦</div>
+          <div class="g-label">Male</div>
+          <div class="g-desc">Grooming, gadgets, eating out</div>
+        </div>
+        <div class="gender-card" data-val="female" onclick="selectGender(this)">
+          <div class="g-icon">👧</div>
+          <div class="g-label">Female</div>
+          <div class="g-desc">Skincare, fashion, self-care included</div>
+        </div>
+        <div class="gender-card" data-val="other" onclick="selectGender(this)">
+          <div class="g-icon">🧑</div>
+          <div class="g-label">Non-binary / Other</div>
+          <div class="g-desc">Generalised spending categories</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label style="margin-bottom:12px">Your current situation</label>
+      <div class="sit-grid">
+        <div class="sit-card selected" data-val="School student" onclick="selectSit(this)">
+          <div class="s-icon">🎒</div><div class="s-label">School Student</div>
+        </div>
+        <div class="sit-card" data-val="College — hostel" onclick="selectSit(this)">
+          <div class="s-icon">🏠</div><div class="s-label">College (Hostel)</div>
+        </div>
+        <div class="sit-card" data-val="College — PG" onclick="selectSit(this)">
+          <div class="s-icon">🏢</div><div class="s-label">College (PG)</div>
+        </div>
+        <div class="sit-card" data-val="College — home" onclick="selectSit(this)">
+          <div class="s-icon">🏡</div><div class="s-label">College (Home)</div>
+        </div>
+        <div class="sit-card" data-val="Working — first job" onclick="selectSit(this)">
+          <div class="s-icon">💼</div><div class="s-label">First Job</div>
+        </div>
+        <div class="sit-card" data-val="Intern" onclick="selectSit(this)">
+          <div class="s-icon">📋</div><div class="s-label">Intern</div>
+        </div>
+        <div class="sit-card" data-val="Freelancer" onclick="selectSit(this)">
+          <div class="s-icon">💻</div><div class="s-label">Freelancer</div>
+        </div>
+        <div class="sit-card" data-val="Gap year" onclick="selectSit(this)">
+          <div class="s-icon">✈️</div><div class="s-label">Gap Year</div>
+        </div>
+        <div class="sit-card" data-val="Working professional" onclick="selectSit(this)">
+          <div class="s-icon">📈</div><div class="s-label">Working Pro</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label style="margin-bottom:12px">Your money vibe</label>
+      <div class="vibe-grid">
+        <div class="vibe-card" data-val="Minimalist" onclick="selectVibe(this)">
+          <div class="v-title">🧘 Minimalist</div>
+          <div class="v-desc">Save max, spend less, live simply</div>
+        </div>
+        <div class="vibe-card selected" data-val="Balanced" onclick="selectVibe(this)">
+          <div class="v-title">⚖️ Balanced</div>
+          <div class="v-desc">Enjoy life AND save smartly</div>
+        </div>
+        <div class="vibe-card" data-val="YOLO" onclick="selectVibe(this)">
+          <div class="v-title">🎉 YOLO</div>
+          <div class="v-desc">Spend now, figure later (we'll help)</div>
+        </div>
+        <div class="vibe-card" data-val="Ambitious" onclick="selectVibe(this)">
+          <div class="v-title">🚀 Ambitious</div>
+          <div class="v-desc">Invest heavy, grow fast, retire early</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2 ── -->
+  <div class="ob-step" id="step-2">
+    <h2 class="display d-lg mb-8">Your money right now</h2>
+    <p class="body-md mb-16">Be honest — AI judges no one. It roasts, not judges. 💀</p>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Monthly income / allowance / stipend (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="ob-income" class="form-control green-focus" value="0" min="0" step="500"/></div>
+        <div class="body-sm mt-8">No income yet? 0 is valid!</div>
+      </div>
+      <div class="form-group">
+        <label>How much can you save per month? (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="ob-cansave" class="form-control green-focus" value="500" min="0" step="100"/></div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Total savings you have RIGHT NOW (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="ob-saved" class="form-control green-focus" value="0" min="0" step="500"/></div>
+      </div>
+      <div class="form-group">
+        <label>Approximate monthly spending (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="ob-spend" class="form-control green-focus" value="3000" min="0" step="200"/></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="range-row">
+        <label style="margin:0">Expected yearly income growth %</label>
+        <span class="range-val" id="growth-show">15%</span>
+      </div>
+      <input type="range" id="ob-growth" min="0" max="50" value="15" oninput="document.getElementById('growth-show').textContent=this.value+'%'"/>
+      <div class="body-sm mt-8">Students: set for when you expect salary. Working: 10–20% is typical.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Family members you support financially</label>
+        <input type="number" id="ob-deps" class="form-control" value="0" min="0" max="10"/>
+      </div>
+      <div class="form-group">
+        <label>Retire at age</label>
+        <div class="range-row" style="margin-top:8px">
+          <input type="range" id="ob-retire" min="35" max="65" value="55" style="flex:1" oninput="updateRetireLabel(this.value)"/>
+          <span class="range-val" id="retire-show" style="margin-left:12px">55</span>
+        </div>
+        <div id="retire-note" class="body-sm mt-8 green"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 3 ── -->
+  <div class="ob-step" id="step-3">
+    <h2 class="display d-lg mb-8">Your big goals</h2>
+    <p class="body-md mb-16">Gen Z plans too. Toggle the goals you're working towards.</p>
+
+    <!-- Car -->
+    <div class="goal-card active" id="gc-car">
+      <div class="goal-card-header" onclick="toggleGoal('car')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5rem">🚗</span>
+          <div><div class="bold">Car / Bike</div><div class="body-sm">Your first ride</div></div>
+        </div>
+        <div class="toggle-switch on" id="ts-car"></div>
+      </div>
+      <div class="goal-card-body">
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Estimated cost (₹)</label>
+            <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-car-amt" class="form-control" value="300000" min="0" step="25000"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>In how many years</label>
+            <input type="number" id="g-car-yrs" class="form-control" value="4" min="1" max="20"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- House -->
+    <div class="goal-card" id="gc-house">
+      <div class="goal-card-header" onclick="toggleGoal('house')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5rem">🏠</span>
+          <div><div class="bold">House / Flat</div><div class="body-sm">Your own space</div></div>
+        </div>
+        <div class="toggle-switch" id="ts-house"></div>
+      </div>
+      <div class="goal-card-body">
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Estimated cost (₹)</label>
+            <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-house-amt" class="form-control" value="5000000" min="0" step="100000"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>In how many years</label>
+            <input type="number" id="g-house-yrs" class="form-control" value="10" min="1" max="30"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trip -->
+    <div class="goal-card" id="gc-trip">
+      <div class="goal-card-header" onclick="toggleGoal('trip')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5rem">✈️</span>
+          <div><div class="bold">Dream Trip</div><div class="body-sm">Manali, Europe, Bali...</div></div>
+        </div>
+        <div class="toggle-switch" id="ts-trip"></div>
+      </div>
+      <div class="goal-card-body">
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Estimated cost (₹)</label>
+            <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-trip-amt" class="form-control" value="50000" min="0" step="5000"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>In how many years</label>
+            <input type="number" id="g-trip-yrs" class="form-control" value="2" min="1" max="10"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gadget -->
+    <div class="goal-card" id="gc-gadget">
+      <div class="goal-card-header" onclick="toggleGoal('gadget')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5rem">💻</span>
+          <div><div class="bold">Gadget / Laptop</div><div class="body-sm">MacBook, gaming PC, phone...</div></div>
+        </div>
+        <div class="toggle-switch" id="ts-gadget"></div>
+      </div>
+      <div class="goal-card-body">
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Estimated cost (₹)</label>
+            <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-gadget-amt" class="form-control" value="80000" min="0" step="5000"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>In how many years</label>
+            <input type="number" id="g-gadget-yrs" class="form-control" value="1" min="1" max="10"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Fund -->
+    <div class="goal-card" id="gc-emergency">
+      <div class="goal-card-header" onclick="toggleGoal('emergency')">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:1.5rem">🛡️</span>
+          <div><div class="bold">Emergency Fund</div><div class="body-sm">3–6 months of expenses saved</div></div>
+        </div>
+        <div class="toggle-switch" id="ts-emergency"></div>
+      </div>
+      <div class="goal-card-body">
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Target amount (₹)</label>
+            <div class="input-wrap"><span class="input-prefix">₹</span><input type="number" id="g-emergency-amt" class="form-control" value="50000" min="0" step="5000"/></div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Build in how many years</label>
+            <input type="number" id="g-emergency-yrs" class="form-control" value="1" min="1" max="5"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom spacer for fixed nav -->
+  <div style="height:80px"></div>
+</div>
+
+<!-- FIXED BOTTOM NAV -->
+<div class="ob-nav">
+  <div class="ob-nav-inner">
+    <button class="btn btn-ghost" id="btn-back" onclick="prevStep()" style="width:auto;min-width:100px">← Back</button>
+    <span class="step-info" id="step-info">Step 1 of 3</span>
+    <button class="btn btn-pink" id="btn-next" onclick="nextStep()" style="flex:1">Next →</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let currentStep = 1;
+let selectedGender = 'male';
+let selectedSit = 'School student';
+let selectedVibe = 'Balanced';
+const goalStates = { car:true, house:false, trip:false, gadget:false, emergency:false };
+
+function selectGender(el) {
+  document.querySelectorAll('.gender-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGender = el.dataset.val;
+}
+function selectSit(el) {
+  document.querySelectorAll('.sit-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedSit = el.dataset.val;
+}
+function selectVibe(el) {
+  document.querySelectorAll('.vibe-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedVibe = el.dataset.val;
+}
+function toggleGoal(key) {
+  goalStates[key] = !goalStates[key];
+  const card = document.getElementById('gc-'+key);
+  const ts   = document.getElementById('ts-'+key);
+  card.classList.toggle('active', goalStates[key]);
+  ts.classList.toggle('on', goalStates[key]);
+}
+function updateRetireLabel(v) {
+  document.getElementById('retire-show').textContent = v;
+  const age = parseInt(document.getElementById('ob-age').value) || 20;
+  const yrs = v - age;
+  document.getElementById('retire-note').textContent =
+    yrs > 0 ? `${yrs} years away — compounding does the heavy lifting 💪` : '';
+}
+updateRetireLabel(55);
+
+function showStep(n) {
+  document.querySelectorAll('.ob-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  // dots
+  for(let i=1;i<=3;i++){
+    const d = document.getElementById('dot-'+i);
+    d.classList.remove('active','done');
+    if(i===n) d.classList.add('active');
+    else if(i<n) d.classList.add('done');
+  }
+  document.getElementById('step-label').textContent = `Step ${n} of 3`;
+  document.getElementById('step-info').textContent   = `Step ${n} of 3`;
+  document.getElementById('btn-back').style.display  = n===1 ? 'none' : 'block';
+  document.getElementById('btn-next').textContent    = n===3 ? 'Build my profile! 🚀' : 'Next →';
+  currentStep = n;
+  window.scrollTo(0,0);
+}
+
+function nextStep() {
+  if (currentStep===1) {
+    if (!document.getElementById('ob-name').value.trim()) { alert('Please enter your name!'); return; }
+  }
+  if (currentStep < 3) { showStep(currentStep+1); return; }
+  // Build profile
+  buildProfile();
+}
+function prevStep() { if(currentStep>1) showStep(currentStep-1); }
+
+function buildProfile() {
+  const goals = [];
+  const gmap = {
+    car:     { name:'Car/Bike',       icon:'🚗' },
+    house:   { name:'House/Flat',     icon:'🏠' },
+    trip:    { name:'Dream Trip',     icon:'✈️' },
+    gadget:  { name:'Gadget/Laptop',  icon:'💻' },
+    emergency:{ name:'Emergency Fund',icon:'🛡️' },
+  };
+  for (const [key, active] of Object.entries(goalStates)) {
+    if (!active) continue;
+    const amt = parseFloat(document.getElementById(`g-${key}-amt`).value) || 0;
+    const yrs = parseInt(document.getElementById(`g-${key}-yrs`).value) || 1;
+    if (amt > 0) goals.push({ ...gmap[key], amount: amt, years: yrs });
+  }
+
+  RR.profile = {
+    name:     document.getElementById('ob-name').value.trim() || 'Friend',
+    age:      parseInt(document.getElementById('ob-age').value) || 20,
+    city:     document.getElementById('ob-city').value,
+    gender:   selectedGender,
+    situation:selectedSit,
+    vibe:     selectedVibe,
+    income:   parseFloat(document.getElementById('ob-income').value) || 0,
+    canSave:  parseFloat(document.getElementById('ob-cansave').value) || 0,
+    saved:    parseFloat(document.getElementById('ob-saved').value) || 0,
+    spend:    parseFloat(document.getElementById('ob-spend').value) || 0,
+    growth:   parseInt(document.getElementById('ob-growth').value) || 10,
+    deps:     parseInt(document.getElementById('ob-deps').value) || 0,
+    retire:   parseInt(document.getElementById('ob-retire').value) || 55,
+    goals,
+  };
+  RR.loggedIn = true;
+  window.location.href = 'dashboard.html';
+}
+
+showStep(1);
+</script>
+</body>
+</html>

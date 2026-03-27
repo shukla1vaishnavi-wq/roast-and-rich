@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Roast first. Rich later.</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+body { overflow-x: hidden; }
+
+/* Hero */
+.hero { min-height: 100vh; display: flex; align-items: center; padding-top: 62px; position: relative; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 72% 50%, rgba(255,32,112,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 38% 38% at 18% 78%, rgba(170,238,34,.05) 0%, transparent 60%);
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0; opacity: .025;
+  background-image: linear-gradient(var(--border2) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--border2) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+.hero .container { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; padding: 56px 40px; }
+
+.hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--pink-dim); border: 1px solid var(--pink); border-radius: 20px; padding: 5px 14px; font-size: .76rem; font-weight: 600; color: var(--pink); margin-bottom: 22px; }
+.hero-title { margin-bottom: 18px; }
+.hero-title .line1 { display: block; color: var(--green); }
+.hero-title .line2 { display: block; color: var(--text); }
+.hero-title .accent { color: var(--pink); }
+.hero-sub { font-size: 1.05rem; color: var(--text2); line-height: 1.7; max-width: 440px; margin-bottom: 32px; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 44px; }
+.hero-divider { border-top: 1px solid var(--border); padding-top: 32px; display: flex; gap: 36px; }
+.hero-stat-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.55rem; font-weight: 800; }
+.hero-stat-lbl { font-size: .76rem; color: var(--text3); margin-top: 3px; }
+
+/* Dashboard mockup */
+.dash-mockup { background: var(--surface); border: 1px solid var(--border2); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow), 0 0 50px rgba(255,32,112,.07); }
+.mock-topbar { background: var(--surf2); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+.mock-dots   { display: flex; gap: 5px; }
+.mock-dot    { width: 9px; height: 9px; border-radius: 50%; }
+.mock-body   { padding: 18px; }
+.mock-hero   { background: linear-gradient(135deg, rgba(170,238,34,.1), rgba(255,32,112,.07)); border: 1px solid var(--border2); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.mock-num    { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.45rem; font-weight: 800; color: var(--green); }
+.mock-lbl    { font-size: .68rem; color: var(--text3); margin-top: 2px; }
+.mock-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 12px; }
+.mock-cell   { background: var(--surf2); border-radius: 8px; padding: 9px 11px; }
+.mock-cell-v { font-family: 'Plus Jakarta Sans', sans-serif; font-size: .88rem; font-weight: 700; }
+.mock-cell-l { font-size: .62rem; color: var(--text3); margin-top: 1px; }
+.mock-btn    { border-radius: 8px; padding: 9px 12px; font-size: .75rem; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; transition: opacity .15s; }
+.mock-btn:hover { opacity: .8; }
+.mock-btn.pk { background: var(--pink-dim); color: var(--pink); border: 1px solid var(--pink); }
+.mock-btn.gn { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+
+/* Sections */
+.section-alt { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+@media(max-width:900px){ .hero .container { grid-template-columns: 1fr; gap: 36px; } }
+@media(max-width:640px){ .hero-ctas { flex-direction: column; } .hero-divider { flex-direction: column; gap: 16px; } }
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Roast first. Rich later.</div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="inner">
+    <div class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="scrollTo(0,0)">Home</button>
+      <button class="nav-link" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Features</button>
+      <button class="nav-link" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How it works</button>
+      <button class="nav-link" onclick="document.getElementById('who').scrollIntoView({behavior:'smooth'})">Who it's for</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <!-- Left -->
+    <div class="anim-fade-up">
+      <div class="hero-eyebrow">
+        <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3.5" fill="var(--pink)"/></svg>
+        India's Gen Z Financial Co-Pilot
+      </div>
+      <h1 class="display d-hero hero-title">
+        <span class="line1">Roast</span>
+        <span class="line2">your money.<br/><span class="accent">Get Rich.</span></span>
+      </h1>
+      <p class="hero-sub">Brutally honest AI that roasts your bad spends, builds your budget, tracks your goals, and shows you exactly how to get to ₹1 Crore — no boring finance lecture, ever.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-pink btn-lg" onclick="window.location.href='onboarding.html'">Get Started Free →</button>
+        <button class="btn btn-ghost btn-lg" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">See Features</button>
+      </div>
+      <div class="hero-divider">
+        <div>
+          <div class="hero-stat-val green">₹1 Cr+</div>
+          <div class="hero-stat-lbl">Possible corpus at 40<br>starting at 22</div>
+        </div>
+        <div>
+          <div class="hero-stat-val pink">6 Tools</div>
+          <div class="hero-stat-lbl">All your money needs<br>in one place</div>
+        </div>
+        <div>
+          <div class="hero-stat-val" style="color:var(--text)">100%</div>
+          <div class="hero-stat-lbl">Free. Always.<br>No credit card.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: mockup -->
+    <div class="anim-fade-up" style="animation-delay:.18s">
+      <div class="dash-mockup">
+        <div class="mock-topbar">
+          <div class="mock-dots">
+            <div class="mock-dot" style="background:#ff5f57"></div>
+            <div class="mock-dot" style="background:#ffbd2e"></div>
+            <div class="mock-dot" style="background:#28c840"></div>
+          </div>
+          <div style="font-size:.74rem;color:var(--text3);font-weight:500">Dashboard — Priya, 21</div>
+          <div style="font-size:.7rem;color:var(--text3)">⚙️</div>
+        </div>
+        <div class="mock-body">
+          <div class="mock-hero">
+            <div style="font-size:.66rem;color:var(--text3);margin-bottom:5px">Invest ₹2,000/month from today →</div>
+            <div class="mock-num">₹1.4 Cr</div>
+            <div class="mock-lbl">by age 55 · 34 years of compounding</div>
+          </div>
+          <div class="mock-grid">
+            <div class="mock-cell"><div class="mock-cell-v green">₹15,000</div><div class="mock-cell-l">Monthly income</div></div>
+            <div class="mock-cell"><div class="mock-cell-v green">₹2,000</div><div class="mock-cell-l">Monthly savings</div></div>
+            <div class="mock-cell"><div class="mock-cell-v" style="color:var(--pink)">13%</div><div class="mock-cell-l">Savings rate</div></div>
+            <div class="mock-cell"><div class="mock-cell-v" style="color:var(--text)">62/100</div><div class="mock-cell-l">Money health</div></div>
+          </div>
+          <div class="mock-btn pk">🔥 Money Roast — get honest feedback</div>
+          <div class="mock-btn gn">🚦 FOMO Filter — check before you pay</div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+            <span style="font-size:.67rem;color:var(--text3)">🚗 Car · 4yr</span>
+            <span style="font-size:.67rem;color:var(--text3)">✈️ Trip · 2yr</span>
+            <span style="font-size:.67rem;color:var(--green)">On track ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section section-alt" id="features">
+  <div class="container">
+    <div class="center mb-16">
+      <div class="label-cap mb-8">What's inside</div>
+      <h2 class="display d-xl">Everything your wallet needs</h2>
+      <p class="body-lg" style="max-width:500px;margin:10px auto 0">Six tools. One profile. Zero boring finance lectures.</p>
+    </div>
+    <div class="grid-3 anim-stagger mt-40">
+
+      <div class="feat-card" onclick="window.location.href='roast.html'" style="cursor:pointer">
+        <div class="feat-icon pink-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M13 4C13 4 7.5 8 7.5 13c0 1.8.7 3.4 1.8 4.5l-.8 3h10l-.8-3c1.1-1.1 1.8-2.7 1.8-4.5 0-5-5.5-9-5.5-9z" fill="var(--pink)" opacity=".3"/>
+            <path d="M13 5.5C13 5.5 8.5 9 8.5 13c0 1.6.6 3 1.6 4l-.7 2.5h9.2l-.7-2.5c1-1 1.6-2.4 1.6-4 0-4-4.5-7.5-4.5-7.5z" fill="var(--pink)"/>
+            <circle cx="13" cy="13.5" r="1.8" fill="white" opacity=".8"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">Money Roast 🔥</div>
+        <p class="body-md">Enter your monthly spending. Get a savage, brutally honest roast — then a real fix plan that actually works.</p>
+        <div class="mt-16"><span class="badge badge-pink">Most popular</span></div>
+      </div>
+
+      <div class="feat-card" onclick="window.location.href='fomo.html'" style="cursor:pointer">
+        <div class="feat-icon green-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="9.5" stroke="var(--green)" stroke-width="1.8" fill="var(--green-dim)"/>
+            <path d="M13 8v7M13 17.5v1.5" stroke="var(--green)" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">FOMO Filter 🚦</div>
+        <p class="body-md">Type what you want to spend on. AI checks your budget and gives you Go / Wait / Bad Idea — before you tap Pay.</p>
+        <div class="mt-16"><span class="badge badge-green">Our USP</span></div>
+      </div>
+
+      <div class="feat-card" onclick="window.location.href='wealth.html'" style="cursor:pointer">
+        <div class="feat-icon green-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <polyline points="3,21 9,13 15,16.5 23,5.5" stroke="var(--green)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="23" cy="5.5" r="2.2" fill="var(--green)"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">Wealth Builder 📈</div>
+        <p class="body-md">Live compounding chart — see your money grow from today to retirement. Personalised SIP suggestions included.</p>
+      </div>
+
+      <div class="feat-card" onclick="window.location.href='budget.html'" style="cursor:pointer">
+        <div class="feat-icon pink-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="3" y="5" width="20" height="16" rx="3" stroke="var(--pink)" stroke-width="1.8" fill="var(--pink-dim)"/>
+            <path d="M3 10h20" stroke="var(--pink)" stroke-width="1.4"/>
+            <circle cx="9" cy="16" r="2" fill="var(--pink)"/>
+            <circle cx="17" cy="16" r="2" fill="var(--pink)" opacity=".35"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">Smart Budget 📊</div>
+        <p class="body-md">AI generates a personalised budget for your city, situation, and lifestyle. Donut chart + breakdown included.</p>
+      </div>
+
+      <div class="feat-card" onclick="window.location.href='goals.html'" style="cursor:pointer">
+        <div class="feat-icon green-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="9.5" stroke="var(--green)" stroke-width="1.8" fill="var(--green-dim)"/>
+            <circle cx="13" cy="13" r="5.5" stroke="var(--green)" stroke-width="1.3" fill="none"/>
+            <circle cx="13" cy="13" r="2.2" fill="var(--green)"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">Goal Tracker 🎯</div>
+        <p class="body-md">Car, house, dream trip, gadget, emergency fund — every goal with monthly savings needed and feasibility check.</p>
+      </div>
+
+      <div class="feat-card" onclick="window.location.href='chat.html'" style="cursor:pointer">
+        <div class="feat-icon pink-bg">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M4 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8.5L4 23V7a2 2 0 0 1 2-2z" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="9" cy="12" r="1.4" fill="var(--pink)"/>
+            <circle cx="13" cy="12" r="1.4" fill="var(--pink)" opacity=".55"/>
+            <circle cx="17" cy="12" r="1.4" fill="var(--pink)" opacity=".25"/>
+          </svg>
+        </div>
+        <div class="d-sm bold mb-8">AI Chat 💬</div>
+        <p class="body-md">Ask anything about your money. AI already knows your full profile — no context needed every single time.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="container-sm">
+    <div class="center mb-16">
+      <div class="label-cap mb-8">Simple process</div>
+      <h2 class="display d-xl">Up and running in <span class="pink">3 minutes</span></h2>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:30px;margin-top:44px;position:relative">
+      <div class="steps-line"></div>
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div>
+          <div class="d-sm bold mb-8">Set up your profile once</div>
+          <p class="body-md">Your name, age, income, goals, retirement age. Takes 2 minutes. We never ask again — everything is personalised from here.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div>
+          <div class="d-sm bold mb-8">See your personalised dashboard</div>
+          <p class="body-md">Corpus projection, money health score, all 6 tools — pre-loaded with your data. No generic advice, only yours.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div>
+          <div class="d-sm bold mb-8">Use AI tools anytime</div>
+          <p class="body-md">Get roasted, check before buying, see your wealth curve, ask the AI anything. Context-aware responses every time — not templates.</p>
+        </div>
+      </div>
+    </div>
+    <div class="center mt-40">
+      <button class="btn btn-green btn-lg" onclick="window.location.href='onboarding.html'">Start now — it's free →</button>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section class="section section-alt" id="who">
+  <div class="container">
+    <div class="center mb-16">
+      <div class="label-cap mb-8">For every Gen Z</div>
+      <h2 class="display d-xl">Whoever you are,<br/><span class="green">we've got you</span></h2>
+      <p class="body-lg" style="max-width:480px;margin:10px auto 0; white-space: nowrap;"> Gen Z isn't just college students. We cover everyone from 13 to 28.</p>
+    </div>
+    <div class="grid-4 anim-stagger mt-40">
+      <div class="audience-card">
+        <div class="aud-icon">🎒</div>
+        <div class="aud-title">School Students</div>
+        <div class="aud-desc">Pocket money management, saving challenges, first financial habits</div>
+      </div>
+      <div class="audience-card">
+        <div class="aud-icon">🎓</div>
+        <div class="aud-title">College Students</div>
+        <div class="aud-desc">Hostel / PG budgeting, food–delivery app roasts, bill splitting, SIP basics</div>
+      </div>
+      <div class="audience-card">
+        <div class="aud-icon">💼</div>
+        <div class="aud-title">First Jobbers</div>
+        <div class="aud-desc">First salary, tax basics, EMI decisions, investment start</div>
+      </div>
+      <div class="audience-card">
+        <div class="aud-icon">💻</div>
+        <div class="aud-title">Freelancers</div>
+        <div class="aud-desc">Irregular income budgeting, tax estimates, emergency fund building</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section">
+  <div class="container">
+    <div class="center mb-16">
+      <div class="label-cap mb-8">Real talk</div>
+      <h2 class="display d-xl">What Gen Z is saying</h2>
+    </div>
+    <div class="grid-3 anim-stagger mt-40">
+      <div class="testi-card">
+        <p class="testi-text">The Money Roast said, "Bro, you spent ₹3200 on a food-delivery app — that’s 30% of a budget phone gone in a month." I laughed… and then immediately changed my habits.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AR</div>
+          <div><div class="testi-name">Aryan R.</div><div class="testi-role">College student, Delhi</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">The FOMO Filter stopped me from a ₹4500 jacket. Said "WAIT — sale mein ₹1500 kam milega next week." It was right. Waited and got it cheaper.</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:var(--green-dim);border-color:var(--green);color:var(--green)">PK</div>
+          <div><div class="testi-name">Priya K.</div><div class="testi-role">Intern, Bangalore</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <p class="testi-text">I'm 17 and started a ₹500 SIP after the Wealth Builder showed me I could have ₹60L by 40. My parents were shook, and honestly, I was soo shook.</p>
+        <div class="testi-author">
+          <div class="testi-avatar" style="background:rgba(0,230,118,.1);border-color:var(--success);color:var(--success)">SM</div>
+          <div><div class="testi-name">Samar M.</div><div class="testi-role">Class 12, Jaipur</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section style="padding:72px 0;background:linear-gradient(135deg,rgba(255,32,112,.06),rgba(170,238,34,.05));border-top:1px solid var(--border)">
+  <div class="container center">
+    <div class="label-cap mb-8">Ready?</div>
+    <h2 class="display d-xl mb-16">Stop losing money.<br/><span class="pink">Start getting rich.</span></h2>
+    <p class="body-lg mb-16" style="max-width:420px;margin-left:auto;margin-right:auto">3 minutes to set up. Completely free. No account, no card, no nonsense.</p>
+    <button class="btn btn-pink btn-lg" onclick="window.location.href='onboarding.html'">Get Started Free →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container flex-between" style="flex-wrap:wrap;gap:16px">
+    <div>
+      <div class="footer-logo"><span style="color:var(--green)">Roast</span><span style="color:var(--pink)">&</span><span style="color:var(--green)">Rich</span></div>
+      <div class="body-sm mt-4">Roast first. Rich later.</div>
+    </div>
+    <div class="footer-links">
+      <span class="footer-link" onclick="window.location.href='onboarding.html'">Get Started</span>
+      <span class="footer-link" onclick="window.location.href='dashboard.html'">Dashboard</span>
+      <span class="footer-link" onclick="window.location.href='roast.html'">Money Roast</span>
+      <span class="footer-link" onclick="window.location.href='fomo.html'">FOMO Filter</span>
+      <span class="footer-link" onclick="window.location.href='wealth.html'">Wealth Builder</span>
+    </div>
+    <div class="body-sm">Protex Hackathon 2026 · Track 3: Personal Finance & Wealth</div>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const p = RR.profile;
+  if (p && RR.loggedIn) {
+    const ctaWrap = document.querySelector('.hero-ctas');
+    if (ctaWrap) {
+      ctaWrap.innerHTML = `
+        <button class="btn btn-pink btn-lg" onclick="window.location.href='dashboard.html'">Continue as ${p.name} →</button>
+        <button class="btn btn-ghost btn-lg" onclick="window.location.href='onboarding.html'">New Login / Edit</button>
+        <button class="btn btn-ghost btn-lg" style="color:var(--danger);border-color:var(--danger)" onclick="doLogoutHome()">Logout</button>`;
+    }
+  }
+});
+function doLogoutHome() {
+  if (!confirm('Log out? Your data will be cleared.')) return;
+  RR.logout();
+  window.location.reload();
+}
+</script>
+</body>
+</html>

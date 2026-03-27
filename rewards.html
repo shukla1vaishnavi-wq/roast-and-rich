@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Rewards</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:860px;margin:0 auto;padding:76px 40px 60px}
+.p-hero{background:linear-gradient(135deg,rgba(255,32,112,.08),rgba(170,238,34,.06));border:2px solid var(--pink);border-radius:20px;padding:30px;text-align:center;margin-bottom:22px;position:relative;overflow:hidden}
+.p-hero.good{border-color:var(--green)}
+.score-wrap{width:96px;height:96px;margin:0 auto 14px;position:relative}
+.score-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-big{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.75rem;font-weight:800;line-height:1}
+.score-sub{font-size:.58rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.p-type{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:5px}
+.p-desc{font-size:.88rem;color:var(--text2);max-width:360px;margin:0 auto;line-height:1.6}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+/* 2-col badge grid, earned first */
+.badges-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.badge-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:18px 16px;display:flex;align-items:center;gap:14px;transition:all .2s;position:relative;overflow:hidden}
+.badge-card.earned{border-color:transparent;background:var(--surface)}
+.badge-card.earned::before{content:'';position:absolute;inset:0;border-radius:var(--radius);padding:1.5px;background:linear-gradient(135deg,var(--green),var(--pink));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.badge-card.earned:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(170,238,34,.12)}
+.badge-card.locked{opacity:.35;filter:grayscale(.8)}
+.badge-icon-bg{width:50px;height:50px;border-radius:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.earned .badge-icon-bg{background:linear-gradient(135deg,var(--green-dim),var(--pink-dim))}
+.locked .badge-icon-bg{background:var(--surf2)}
+.badge-name{font-weight:700;font-size:.92rem;margin-bottom:3px}
+.badge-desc{font-size:.74rem;color:var(--text3);line-height:1.4}
+.badge-status{font-size:.64rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:5px}
+.earned .badge-status{color:var(--green)}.locked .badge-status{color:var(--text3)}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
+.badge-card.earned::after{content:'✦';position:absolute;top:8px;right:10px;font-size:.72rem;color:var(--green);animation:sparkle 2.5s ease-in-out infinite;animation-delay:calc(var(--d)*.4s)}
+.tip-item{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:12px 16px;font-size:.88rem;margin-bottom:8px;line-height:1.5}
+@media(max-width:640px){.badges-grid{grid-template-columns:1fr}.wrap{padding:72px 14px 60px}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Tallying your wins...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Rewards</h1>
+  </div>
+  <p class="body-md mb-16">Your financial personality score, badges earned, and what to unlock next.</p>
+
+  <!-- Personality hero -->
+  <div class="p-hero" id="p-hero">
+    <div class="score-wrap">
+      <svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--surf3)" stroke-width="8"/><circle id="score-ring" cx="48" cy="48" r="40" fill="none" stroke="var(--pink)" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251" style="transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)"/></svg>
+      <div class="score-inner"><div class="score-big" id="score-num" style="color:var(--pink)">0</div><div class="score-sub">score</div></div>
+    </div>
+    <div class="p-type" id="p-type">—</div>
+    <div class="p-desc" id="p-desc">Complete your profile and start tracking to unlock your score.</div>
+    <div class="pbar-wrap mt-16" style="max-width:260px;margin:12px auto 0"><div class="pbar" id="score-bar" style="width:0%;transition:width 1.1s ease"></div></div>
+    <div style="display:flex;justify-content:space-between;max-width:260px;margin:.3rem auto 0"><span class="body-sm">Spender in Denial</span><span class="body-sm">Budget God</span></div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="metric-card"><div class="metric-val" id="stat-streak" style="color:var(--warn)">0</div><div class="metric-lbl">Day streak</div></div>
+    <div class="metric-card"><div class="metric-val pink" id="stat-badges">0 / 7</div><div class="metric-lbl">Badges earned</div></div>
+    <div class="metric-card"><div class="metric-val" id="stat-mood">0</div><div class="metric-lbl">Mood logs</div></div>
+  </div>
+
+  <!-- Badges — earned first, locked last -->
+  <div class="label-cap mb-12">Your Badges</div>
+  <div class="badges-grid" id="badges-grid"></div>
+
+  <div class="label-cap mt-24 mb-12">How to level up</div>
+  <div id="tips-wrap"></div>
+</div>
+<script src="app.js"></script>
+<script>
+/* SVG badge graphics */
+const BSVG={
+  first_log:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="3" width="16" height="20" rx="2.5" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4"/><path d="M8 9h8M8 13h8M8 17h5" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/><circle cx="21" cy="21" r="5" fill="var(--green)" stroke="var(--bg)" stroke-width="1.5"/><path d="M18.5 21l1.5 1.5L23 19.5" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  streak_3:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3C14 3 9 8 9 14c0 2.8 2.2 5 5 5s5-2.2 5-5c0-1.8-.8-3.2-1.6-4.2C17 12.5 16 15 14 15c0 0-1.5-3.5 0-7-2 .8-3.5 3.5-3.5 6" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="20.5" r="2" fill="var(--pink)"/></svg>`,
+  streak_7:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><polygon points="14,3 17,10 25,11 19.5,17 21,25 14,21.5 7,25 8.5,17 3,11 11,10" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M11 14l2 2L17.5 11" stroke="var(--pink)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  saved_today:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="10" width="20" height="14" rx="2.5" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4"/><path d="M10 10V8a4 4 0 0 1 8 0v2" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="17" r="2.5" fill="var(--green)"/></svg>`,
+  mood_5:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" fill="var(--pink-dim)" stroke="var(--pink)" stroke-width="1.4"/><path d="M10 17c1.1 2.2 6.9 2.2 8 0" stroke="var(--pink)" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="10.5" cy="13" r="1.5" fill="var(--pink)"/><circle cx="17.5" cy="13" r="1.5" fill="var(--pink)"/><path d="M14 4v2M14 22v2M4 14h2M22 14h2" stroke="var(--pink)" stroke-width="1.2" stroke-linecap="round" opacity=".4"/></svg>`,
+  fomo_beaten:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3L4 8v7c0 5.5 4.3 9.5 10 11 5.7-1.5 10-5.5 10-11V8L14 3z" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 14l2.5 2.5 6-6" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  budget_ninja:`<svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" fill="var(--surf3)" stroke="var(--green)" stroke-width="1.4"/><circle cx="14" cy="10" r="3.5" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.3"/><path d="M7 24c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="var(--green)" stroke-width="1.4" stroke-linecap="round" fill="none"/><path d="M21 5l5 2-1.5 3.5" stroke="var(--green)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+};
+
+function sortBadges(earned){
+  return[...BADGE_DEFS.filter(b=>earned.has(b.id)),...BADGE_DEFS.filter(b=>!earned.has(b.id))];
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  requireProfile();injectNavbar('rewards');checkBadges();
+  const pers=getPersonality(),earned=new Set(RR.badges),streak=getStreak();
+  const circ=2*Math.PI*40;
+  const fill=document.getElementById('score-ring');
+  fill.setAttribute('stroke-dasharray',circ);fill.setAttribute('stroke-dashoffset',circ);
+  if(pers){
+    const offset=circ-(pers.score/100)*circ;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{fill.style.strokeDashoffset=offset;document.getElementById('score-bar').style.width=pers.score+'%';}));
+    if(pers.score>=60){fill.style.stroke='var(--green)';document.getElementById('score-num').style.color='var(--green)';document.getElementById('p-hero').classList.add('good');}
+    document.getElementById('score-num').textContent=pers.score;
+    document.getElementById('p-type').textContent=pers.type;
+    document.getElementById('p-desc').textContent=pers.desc;
+  }
+  document.getElementById('stat-streak').textContent=streak;
+  document.getElementById('stat-badges').textContent=`${earned.size} / ${BADGE_DEFS.length}`;
+  document.getElementById('stat-mood').textContent=RR.moodLog.length;
+  /* Earned first, locked last, consistent 2-col */
+  document.getElementById('badges-grid').innerHTML=sortBadges(earned).map((b,i)=>{
+    const ok=earned.has(b.id);
+    return`<div class="badge-card ${ok?'earned':'locked'}" style="--d:${i}">
+      <div class="badge-icon-bg">${BSVG[b.id]||''}</div>
+      <div style="flex:1;min-width:0">
+        <div class="badge-name">${b.name}</div>
+        <div class="badge-desc">${b.desc}</div>
+        <div class="badge-status">${ok?'Earned':'Locked'}</div>
+      </div>
+    </div>`;
+  }).join('');
+  const tips=[];
+  if(!earned.has('first_log'))tips.push('Log your first daily expense in the Tracker tab');
+  if(!earned.has('streak_3'))tips.push('Track expenses 3 days straight — habit forming!');
+  if(!earned.has('mood_5'))tips.push('Log 5 mood check-ins for the Vibe Check Pro badge');
+  if(!earned.has('fomo_beaten'))tips.push('Use FOMO Filter and choose NOT to spend');
+  if(!earned.has('budget_ninja'))tips.push('Keep spending under 80% of income this month');
+  if(pers&&pers.score<60)tips.push('Increase savings rate — even ₹200 more/month raises your score');
+  document.getElementById('tips-wrap').innerHTML=tips.length>0
+    ?tips.map(t=>`<div class="tip-item">→ ${t}</div>`).join('')
+    :`<div class="tip-item" style="border-left-color:var(--green)">All badges earned! Keep your streak and savings rate up to hold the Budget God title.</div>`;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>What's your FIRE number? — Roast&Rich Blog</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading article...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link active" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a><a href="fomo.html">🚦 FOMO</a>
+    <a href="wealth.html">📈 Wealth</a><a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a><a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a><a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a><a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="blog-post-wrap">
+  <div class="blog-post-hero anim-fade-up">
+    <span class="blog-post-emoji">🎯</span>
+    <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:10px">FIRE Movement</div>
+    <h1 class="blog-post-title">What's your FIRE number? The formula that tells you when you're finally free</h1>
+    <div class="blog-post-meta">
+      <span>📅 2026</span><span>⏱ 6 min read</span><span>🔥 Must read</span>
+    </div>
+    <hr class="div"/>
+  </div>
+
+  <div class="blog-post-body anim-fade-up">
+
+    <p>Imagine waking up one day and realizing you never <em>have</em> to work again. Not because you're sick. Not because you're old. But because your investments are generating enough money to cover your entire life — forever.</p>
+    <p>That's FIRE. And there's a number you need to hit to get there.</p>
+
+    <h2>What is FIRE?</h2>
+    <p><strong>FIRE = Financial Independence, Retire Early.</strong> It's a movement (originally from the West, now catching on in India) where people aggressively save and invest early so they can stop working way before the traditional retirement age of 60.</p>
+    <p>We're talking 35. 40. Some legends even hit it at 32.</p>
+
+    <div class="highlight">
+      🧮 <strong>The FIRE formula:</strong> Your FIRE number = Annual Expenses × 25
+    </div>
+
+    <h2>Let's do the actual math</h2>
+    <p>Say you currently spend ₹40,000/month = ₹4,80,000/year.</p>
+    <p>Your FIRE number:</p>
+    <span class="big-number">₹4,80,000 × 25 = ₹1.2 Crore</span>
+    <p>Once your invested corpus hits ₹1.2 Crore and is growing at ~12%/year, you can theoretically withdraw 4% annually (the "4% rule") and never run out of money. That's ₹4.8 Lakh/year = ₹40,000/month. Forever.</p>
+
+    <h3>Why "× 25"?</h3>
+    <p>Because 1 ÷ 25 = 4%. The 4% rule says if you withdraw 4% of your corpus annually, a diversified investment portfolio historically never runs out — because it keeps growing faster than your withdrawals.</p>
+
+    <div class="callout-pink">
+      ⚠️ <strong>India-specific caveat:</strong> Inflation in India runs higher (~6-7% vs 2-3% in the US). So for India, many FIRE planners suggest using 3% withdrawal (×33 multiplier) to be safer. Your FIRE number might be Annual Expenses × 30-33 for a more conservative approach.
+    </div>
+
+    <h2>Types of FIRE</h2>
+    <h3>🍃 Lean FIRE</h3>
+    <p>Retire with the minimum — a simple, frugal life. Spend ₹20-25k/month, need corpus of ₹60-75 Lakh. Hard but achievable young.</p>
+
+    <h3>⚖️ Regular FIRE</h3>
+    <p>Comfortable middle-class life. Spend ₹50k/month, need ₹1.5 Crore. Target for most people.</p>
+
+    <h3>💎 Fat FIRE</h3>
+    <p>Luxury retirement. Spend ₹2L+/month, need ₹6+ Crore. Takes longer but some people aim here.</p>
+
+    <h2>How Gen Z can actually hit FIRE</h2>
+    <ol>
+      <li><strong>Calculate your FIRE number now</strong> — even a rough estimate focuses your mind</li>
+      <li><strong>Track your expenses</strong> — use the Daily Tracker here on Roast&Rich</li>
+      <li><strong>Invest 30-40% of income from Day 1</strong> — the earlier, the smaller the sacrifice</li>
+      <li><strong>Increase income, not just cut expenses</strong> — skills, freelance, side hustles</li>
+      <li><strong>Use equity SIPs for the long-term corpus</strong> — FDs won't get you to FIRE</li>
+    </ol>
+
+    <div class="highlight">
+      🔢 <strong>Try this:</strong> Open the Wealth Builder on Roast&Rich. Punch in your monthly savings. See how many years until your projected corpus hits your FIRE number. The number might surprise you — in a good way.
+    </div>
+
+    <p>FIRE isn't about never working again if you love your work. It's about having the <em>choice</em>. Working because you want to, not because you have to. That choice is worth building towards — starting today.</p>
+
+  </div>
+
+  <div class="blog-nav">
+    <a href="blog-2.html" class="btn btn-ghost">← Previous</a>
+    <a href="blog-4.html" class="btn btn-pink">Next: Why Gen Z struggles with money →</a>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

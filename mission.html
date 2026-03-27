@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vision & Mission — Roast&Rich</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.vision-wrap{max-width:860px;margin:0 auto;padding:84px 40px 80px}
+
+/* Hero */
+.v-hero{text-align:center;margin-bottom:56px}
+.v-hero-emoji{font-size:4rem;display:block;margin-bottom:14px;line-height:1}
+
+/* Section cards */
+.vm-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+.vm-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;border-radius:4px 0 0 4px}
+.vm-card.green-left::before{background:var(--green)}
+.vm-card.pink-left::before{background:var(--pink)}
+.vm-card.blue-left::before{background:#00e5ff}
+.vm-card.warn-left::before{background:var(--warn)}
+.vm-card-icon{font-size:2.2rem;margin-bottom:12px;display:block}
+.vm-card-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:800;margin-bottom:12px;color:var(--text)}
+.vm-card p{font-size:.95rem;line-height:1.85;color:var(--text2)}
+.vm-card ul{padding-left:20px;margin-top:8px}
+.vm-card li{font-size:.92rem;color:var(--text2);line-height:1.7;margin-bottom:4px}
+
+/* Mission items */
+.mission-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.mission-item{display:flex;gap:14px;align-items:flex-start;background:var(--surf2);border-radius:var(--radius-sm);padding:14px 16px}
+.mission-num{width:28px;height:28px;border-radius:50%;background:var(--pink-dim);border:1.5px solid var(--pink);color:var(--pink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mission-text{font-size:.9rem;line-height:1.65;color:var(--text2)}
+
+/* Quote */
+.quote-block{background:linear-gradient(135deg,rgba(255,32,112,.06),rgba(170,238,34,.04));border-left:3px solid var(--green);border-radius:0 var(--radius) var(--radius) 0;padding:20px 24px;margin:28px 0;font-size:1rem;font-style:italic;line-height:1.8;color:var(--text2)}
+
+/* ── TEAM SECTION ── */
+.team-section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:6px}
+.team-section-sub{font-size:.88rem;color:var(--text3);margin-bottom:32px}
+
+/* Founder card */
+.founder-card{background:var(--surface);border:1.5px solid var(--green);border-radius:var(--radius);padding:28px 30px;margin-bottom:16px;position:relative;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.founder-card:hover{box-shadow:var(--shadow-green);transform:translateY(-2px)}
+.founder-card::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(170,238,34,.07),transparent 70%);pointer-events:none}
+.founder-badge{position:absolute;top:20px;right:20px;background:var(--green-dim);border:1px solid var(--green);border-radius:20px;padding:4px 12px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
+
+/* Co-creator grid */
+.cocreator-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cocreator-card{background:var(--surface);border:1.5px solid var(--pink);border-radius:var(--radius);padding:24px;transition:box-shadow .2s,transform .2s}
+.cocreator-card:hover{box-shadow:var(--shadow-pink);transform:translateY(-2px)}
+
+/* Shared member styles */
+.member-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:16px}
+.member-avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;flex-shrink:0;border:2px solid}
+.member-avatar.green{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.member-avatar.pink{background:var(--pink-dim);border-color:var(--pink);color:var(--pink)}
+.member-avatar.orange{background:rgba(255,107,53,.1);border-color:#ff6b35;color:#ff6b35}
+.member-info{flex:1;min-width:0}
+.member-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.member-role{font-size:.75rem;color:var(--text3);margin-bottom:8px;line-height:1.5}
+
+/* LinkedIn button */
+.linkedin-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1.5px solid var(--border2);border-radius:6px;padding:5px 12px;font-size:.72rem;font-weight:600;color:var(--text3);cursor:pointer;transition:all .15s;text-decoration:none}
+.linkedin-btn:hover{border-color:#0a66c2;color:#0a66c2;background:rgba(10,102,194,.08)}
+.linkedin-btn svg{width:13px;height:13px;flex-shrink:0}
+
+.member-story{font-size:.88rem;line-height:1.8;color:var(--text2)}
+.member-story p{margin-bottom:10px}
+.member-story p:last-child{margin-bottom:0}
+
+/* Timeline */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:18px;padding-bottom:28px;position:relative}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:14px;top:32px;bottom:0;width:1px;background:linear-gradient(var(--border2),transparent)}
+.tl-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--green);background:var(--green-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;font-weight:800;color:var(--green)}
+.tl-dot.pink{border-color:var(--pink);background:var(--pink-dim);color:var(--pink)}
+.tl-dot.muted{border-color:var(--border2);background:var(--surf2);color:var(--text3)}
+.tl-content{flex:1;padding-top:4px}
+.tl-tag{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.tl-text{font-size:.9rem;color:var(--text2);line-height:1.65}
+
+/* Feature pills */
+.feature-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--border2);border-radius:20px;padding:6px 14px;font-size:.8rem;font-weight:500;color:var(--text2);margin:4px}
+.feature-pill.soon{border-color:var(--green);color:var(--green);background:var(--green-dim)}
+
+@media(max-width:640px){
+  .vision-wrap{padding:80px 16px 60px}
+  .vm-card{padding:20px 18px}
+  .cocreator-grid{grid-template-columns:1fr}
+  .founder-badge{display:none}
+  .member-avatar{width:48px;height:48px;font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading our story...</div>
+</div>
+
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link active">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a>
+    <a href="fomo.html">🚦 FOMO</a><a href="wealth.html">📈 Wealth</a>
+    <a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a>
+    <a href="rewards.html">🏆 Rewards</a><a href="chat.html">💬 AI Chat</a>
+    <a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="vision-wrap">
+
+  <!-- HERO -->
+  <div class="v-hero anim-fade-up">
+    <span class="v-hero-emoji">🌟</span>
+    <div class="label-cap mb-10">Roast&Rich · IGDTUW · Protex Hackathon 2026</div>
+    <h1 class="display d-lg mb-12">Vision, Mission &amp; <span class="pink">Our Story</span></h1>
+    <p class="body-lg" style="max-width:520px;margin:0 auto">Why we built this, what we're trying to change, and the three people behind every feature.</p>
+  </div>
+
+  <!-- VISION -->
+  <div class="vm-card green-left anim-fade-up">
+    <span class="vm-card-icon">🔭</span>
+    <div class="vm-card-title">Our Vision</div>
+    <p>A world where <strong>every Gen Z Indian is financially literate before they turn 20</strong> — not because a textbook forced them to be, but because a tool made it actually make sense.</p>
+    <p style="margin-top:10px">We want to be the generation that broke the cycle of "hum log toh bas naukri karte hain, paisa manage karna toh baad mein dekhenge." The generation that started investing at 18, hit their first crore at 35, and understood exactly what was happening at every step.</p>
+  </div>
+
+  <!-- MISSION -->
+  <div class="vm-card pink-left anim-fade-up">
+    <span class="vm-card-icon">🎯</span>
+    <div class="vm-card-title">Our Mission</div>
+    <p>Build financial tools that <strong>actually speak Gen Z</strong> — in Hinglish, with honesty, with humour, and with real actionable advice instead of vague platitudes.</p>
+    <div class="mission-list">
+      <div class="mission-item">
+        <div class="mission-num">1</div>
+        <div class="mission-text"><strong>Demystify money</strong> — break down SIPs, budgeting, compounding and goals in language a 19-year-old in a hostel room actually understands</div>
+      </div>
+      <div class="mission-item">
+        <div class="mission-num">2</div>
+        <div class="mission-text"><strong>Create action, not just awareness</strong> — give specific, personalised recommendations based on your actual income, city, and goals</div>
+      </div>
+      <div class="mission-item">
+        <div class="mission-num">3</div>
+        <div class="mission-text"><strong>Build habits before bad ones form</strong> — the spending patterns you set at 20 follow you to 35. We intervene early, with equal parts honesty and sarcasm</div>
+      </div>
+      <div class="mission-item">
+        <div class="mission-num">4</div>
+        <div class="mission-text"><strong>Make wealth-building feel possible</strong> — not a privilege for the already-wealthy, but a realistic path for anyone starting with ₹500 and consistency</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "Financial literacy shouldn't feel scary — it should feel empowering. We built Roast&Rich because every young person in India deserves a financial co-pilot that's honest, smart, and doesn't talk down to them."
+  </div>
+
+  <!-- ════════════════════════
+       TEAM SECTION
+  ════════════════════════ -->
+  <div class="mt-40 mb-4">
+    <div class="label-cap mb-6">The people behind it</div>
+    <div class="team-section-title">Meet the Team 👋</div>
+    <p class="team-section-sub">Built at IGDTUW for Protex Hackathon 2026 · Three people, one shared belief: Gen Z deserves better financial tools.</p>
+  </div>
+
+  <!-- ── FOUNDER: VAISHNAVI ── -->
+  <div class="founder-card anim-fade-up">
+    <div class="founder-badge">Founder</div>
+    <div class="member-top">
+      <div class="member-avatar green">V</div>
+      <div class="member-info">
+        <div class="member-name">Vaishnavi</div>
+        <div class="member-role">Founder · Roast&Rich · IGDTUW · Protex Hackathon 2026</div>
+        <a class="linkedin-btn" href="https://www.linkedin.com/in/vaishnavi-shukla-624a54375?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+      </div>
+    </div>
+    <div class="member-story">
+      <p>I grew up in a home where finance was never a mystery. With my father coming from a finance background, I often heard things like “compounding is the eighth wonder of the world” long before I truly understood them. His fascination with numbers and his small saving lessons shaped my mindset early on.</p>
+      <p>By nature, I’m minimalistic — I like saving and keeping things simple. Still, I often found myself unsure. I didn’t always know where my money was going or what habits were affecting my savings. Knowing the theory is one thing; handling it alone feels very different.</p>
+      <p>Building this app changed that. What began as a basic hackathon project became something I genuinely cared about. The more I worked on it, the more invested I became — and it made me feel productive and proud. I learned things my science background never taught: financial terms, spending patterns, and the importance of tracking even the smallest habits.</p>
+      <p>And I didn’t build it alone. Every feature and every “this would actually help students” moment came from conversations with my teammates. Together, we shaped something real and useful — from the mood tracker to the budget planner to the FOMO checker.</p>
+      <p>Now, I’m excited to see how this app helps others the way it helped me. I want students to feel more aware, more confident, and less confused about their money. And honestly, I can’t wait to hear what people think when they finally try it.</p>
+    </div>
+  </div>
+
+  <!-- ── CO-CREATORS ── -->
+  <div class="cocreator-grid anim-fade-up">
+
+    <!-- Rishija -->
+    <div class="cocreator-card">
+      <div class="member-top">
+        <div class="member-avatar pink">R</div>
+        <div class="member-info">
+          <div class="member-name">Rishija Kumari</div>
+          <div class="member-role">Co-Creator · Feature Strategy &amp; Content Vision · IGDTUW</div>
+          <a class="linkedin-btn" href="https://www.linkedin.com/in/rishija-kumari-893065378?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+      <div class="member-story">
+  <p>I wanted to build this because I’ve always used my Notes app to manage my expenses. But no existing app ever felt truly mine — nothing aligned with what I actually needed as a student. Roast&Rich changed that for me. It turned a quiet wish into reality: having an app that finally understands how we handle our money.</p>
+  <p>From choosing which features should stay, what needed improvement, and what we could let go — I’ve been part of every brainstorming moment. Even if I wasn’t the one writing the code, I still helped shape how the whole experience feels. And that’s something I’m genuinely proud of.</p>
+</div>
+    </div>
+
+    <!-- Aashima -->
+    <div class="cocreator-card">
+      <div class="member-top">
+        <div class="member-avatar orange">A</div>
+        <div class="member-info">
+          <div class="member-name">Aashima</div>
+          <div class="member-role">Co-Creator · Experience Insights &amp; Presentation Lead · IGDTUW</div>
+          <a class="linkedin-btn" href="https://www.linkedin.com/in/aashima-goyal-3b096637b?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="#0a66c2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+        </div>
+      </div>
+      <div class="member-story">
+  <p>Coming from Haryana and living in a PG in Delhi taught me one thing — expenses can spiral out of control faster than you expect. Impulsive choices, sudden plans, unexpected costs… they pile up before you even realise it.</p>
+  <p>Working on this app helped me understand my own spending patterns more clearly. Building it ourselves felt empowering. For the first time, managing money didn’t feel like a burden — it felt like a skill we were finally learning. And honestly? I’m excited to use this every day. We’ve created something that truly helps students like us understand money better, plan smarter, and avoid those “Why did I spend that?” moments.</p>
+</div>
+    </div>
+
+  </div><!-- end cocreator-grid -->
+
+  <!-- PROBLEM STATEMENT -->
+  <div class="vm-card blue-left anim-fade-up" style="margin-top:8px">
+    <span class="vm-card-icon">💡</span>
+    <div class="vm-card-title">What problem are we actually solving?</div>
+    <p>India has a massive financial literacy gap — especially for young people. Most personal finance content is too old-school, too complicated, too generic, or trying to sell you something. Roast&Rich is none of those. No ads. No commissions. No agenda except helping you understand your money and build better habits — at your pace, in your language.</p>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="label-cap mt-40 mb-12">The roadmap</div>
+  <div class="timeline anim-fade-up">
+    <div class="tl-item">
+      <div class="tl-dot">✓</div>
+      <div class="tl-content">
+        <div class="tl-tag">Phase 1 — Live now ✅</div>
+        <div class="tl-text">AI Money Roast, FOMO Filter, Wealth Builder, Smart Budget, Goal Tracker, Daily Tracker, Mood Tracker, Rewards system, AI Chat, Blog, Vision &amp; Mission page</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot">2</div>
+      <div class="tl-content">
+        <div class="tl-tag">Phase 2 — Coming soon 🚀</div>
+        <div class="tl-text">UPI statement import (auto-categorise real spending from bank CSV). Social savings challenges with friends. Push notifications for streak reminders and budget alerts.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot pink">3</div>
+      <div class="tl-content">
+        <div class="tl-tag">Phase 3 — In planning 💭</div>
+        <div class="tl-text">Cross-device Firebase sync. Parent dashboard (optional progress sharing). Regional language support — Hindi UI coming first. Direct SIP comparison tool.</div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot muted">4</div>
+      <div class="tl-content">
+        <div class="tl-tag">Phase 4 — The big dream 🌏</div>
+        <div class="tl-text">Full mobile app for Android + iOS. School/college curriculum integration. Reaching 10 lakh young Indians with tools that actually change their financial lives.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUTURE FEATURES -->
+  <div class="vm-card warn-left anim-fade-up" style="margin-top:24px">
+    <span class="vm-card-icon">✨</span>
+    <div class="vm-card-title">Feature wishlist — things we want to build</div>
+    <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:4px">
+      <span class="feature-pill soon">📱 Mobile App</span>
+      <span class="feature-pill soon">📊 UPI Statement Import</span>
+      <span class="feature-pill soon">🔔 Budget Alerts</span>
+      <span class="feature-pill">👥 Savings Challenges with Friends</span>
+      <span class="feature-pill">🌐 Hindi UI</span>
+      <span class="feature-pill">📈 Direct SIP Comparison Tool</span>
+      <span class="feature-pill">🏫 School / College Mode</span>
+      <span class="feature-pill">📷 Receipt Scanner</span>
+      <span class="feature-pill">🎮 Finance Game Mode</span>
+      <span class="feature-pill">💬 Community Forum</span>
+      <span class="feature-pill">👨‍👩‍👧 Parent Dashboard</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div style="text-align:center;margin-top:48px;padding:40px 24px;background:linear-gradient(135deg,rgba(170,238,34,.06),rgba(255,32,112,.05));border-radius:var(--radius);border:1px solid var(--border2)" class="anim-fade-up">
+    <div style="font-size:2.5rem;margin-bottom:14px">🚀</div>
+    <h2 class="display d-md mb-12">You're part of something real</h2>
+    <p class="body-md mb-20" style="max-width:440px;margin-left:auto;margin-right:auto">Every person who uses Roast&Rich is part of a movement to make financial literacy the norm — not the exception — for India's Gen Z.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="onboarding.html" class="btn btn-pink">Get Started →</a>
+      <a href="blog.html" class="btn btn-ghost">Read the Blog</a>
+      <a href="dashboard.html" class="btn btn-ghost">Dashboard</a>
+    </div>
+  </div>
+
+</div><!-- end .vision-wrap -->
+<script src="app.js"></script>
+</body>
+</html>

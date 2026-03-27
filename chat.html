@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — AI Chat</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.wrap{max-width:720px;margin:0 auto;padding:76px 40px 0}
+.chat-shell{display:flex;flex-direction:column;height:calc(100vh - 168px)}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px 0;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.chat-bottom{border-top:1px solid var(--border);padding:12px 0 20px;background:var(--bg)}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.chip{background:var(--surf2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:.76rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-dim)}
+.typing-wrap{display:flex;align-items:flex-end;gap:8px}
+.typing-dots{display:flex;align-items:center;gap:4px;padding:10px 15px;background:var(--surf2);border-radius:18px 18px 18px 4px}
+.dot{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:bounce .9s ease-in-out infinite}
+.dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.msg-row{display:flex;align-items:flex-end;gap:8px}
+.msg-row.user{flex-direction:row-reverse}
+.ai-av{width:26px;height:26px;border-radius:50%;background:var(--pink-dim);border:1.5px solid var(--pink);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:700;color:var(--pink);flex-shrink:0}
+.bubble2{max-width:78%;padding:10px 14px;font-size:.9rem;line-height:1.6;word-break:break-word}
+.bubble2.user{background:var(--pink);color:#fff;border-radius:18px 18px 4px 18px}
+.bubble2.ai{background:var(--surf2);color:var(--text);border-radius:18px 18px 18px 4px}
+.msg-ts{font-size:.62rem;color:var(--text3);padding:2px 4px}
+.ts-r{text-align:right}
+@media(max-width:640px){.wrap{padding:72px 14px 0}}
+</style>
+</head>
+<body>
+<div id="loading-screen"><div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div><div class="loader-bar-wrap"><div class="loader-bar"></div></div><div class="loader-tagline">Warming up your AI...</div></div>
+<nav class="navbar" id="universal-navbar"></nav>
+<div class="wrap">
+  <div class="page-header-inner" style="margin-bottom:8px">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">AI Chat</h1>
+    <button class="btn btn-ghost btn-sm" onclick="clearChat()" style="margin-left:auto;width:auto">Clear</button>
+  </div>
+  <div class="chat-shell">
+    <div class="chat-msgs" id="chat-msgs"></div>
+    <div class="chat-bottom">
+      <div class="chat-input-row">
+        <input type="text" id="chat-in" placeholder="Ask anything about your finances..."
+               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send();}"/>
+        <button onclick="send()">Send</button>
+      </div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+let history = [];
+
+function ts() {
+  return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function addMsg(role, text, time) {
+  const msgs = document.getElementById('chat-msgs');
+  const safe = text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/→ /g, '<span style="color:var(--green)">→</span> ')
+    .replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+  if (role === 'user') {
+    msgs.innerHTML += `<div><div class="msg-row user"><div class="bubble2 user">${safe}</div></div><div class="ts-r msg-ts">${time}</div></div>`;
+  } else {
+    msgs.innerHTML += `<div><div class="msg-row"><div class="ai-av">AI</div><div class="bubble2 ai">${safe}</div></div><div class="msg-ts">${time}</div></div>`;
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const el = document.createElement('div');
+  el.id = 'typing'; el.className = 'typing-wrap';
+  el.innerHTML = `<div class="ai-av">AI</div><div class="typing-dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping() { const el = document.getElementById('typing'); if (el) el.remove(); }
+
+async function send() {
+  const inp = document.getElementById('chat-in');
+  const q = inp.value.trim(); if (!q) return;
+  inp.value = ''; inp.disabled = true;
+  addMsg('user', q, ts());
+  history.push({ role: 'user', content: q });
+  showTyping();
+
+  // Check for simple messages first — no API call needed
+  const simpleType = detectSimpleMessage(q);
+  if (simpleType) {
+    const delay = 500 + Math.random() * 500;
+    setTimeout(() => {
+      hideTyping();
+      const reply = getFixedResponse(simpleType);
+      addMsg('ai', reply, ts());
+      history.push({ role: 'assistant', content: reply });
+      inp.disabled = false; inp.focus();
+    }, delay);
+    return;
+  }
+
+  const histStr = history.slice(-8).map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n');
+  const p = RR.profile || {};
+
+  const prompt = `You are Roast&Rich — a direct, honest, and friendly personal finance AI for young Indians.
+  
+User profile:
+${profileStr()}
+
+Conversation so far:
+${histStr}
+
+Important rules for this response:
+1. Write in clear, simple English only — no Hindi, no Hinglish words at all
+2. Do not mention or promote any specific apps or platforms by name (no investment app names, food delivery app names, payment app names, or ride-hailing app names) — use generic terms like "investment platform", "food delivery app", "payment app"
+3. Do not repeat the same opening phrase as your previous response
+4. Use the user's actual profile data when relevant (income, goals, savings)
+5. Be conversational and direct — under 150 words
+6. No ELSS mentions — use index funds, PPF, NPS, liquid funds, or recurring deposits instead
+
+Respond to their latest message naturally.`;
+
+  const delay = 700 + Math.random() * 1000;
+  const reply = await callAI(prompt, 300);
+  setTimeout(() => {
+    hideTyping();
+    addMsg('ai', reply, ts());
+    history.push({ role: 'assistant', content: reply });
+    inp.disabled = false; inp.focus();
+  }, delay);
+}
+
+/* Preset chip click — uses dedicated presetResponse() for accuracy */
+function chipClick(label) {
+  addMsg('user', label, ts());
+  history.push({ role: 'user', content: label });
+  showTyping();
+  const delay = 800 + Math.random() * 600;
+  setTimeout(() => {
+    const reply = presetResponse(label);
+    hideTyping();
+    addMsg('ai', reply, ts());
+    history.push({ role: 'assistant', content: reply });
+  }, delay);
+}
+
+function clearChat() {
+  history = [];
+  document.getElementById('chat-msgs').innerHTML = '';
+  const p = RR.profile;
+  addMsg('ai', `Chat cleared! Hello ${p ? p.name : 'there'} — what would you like to work on?`, ts());
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  requireProfile();
+  injectNavbar('chat');
+  const p = RR.profile;
+
+  /* Welcome messages — clean English, diverse */
+  const welcomes = [
+    `Hello ${p.name}! I have your full financial profile loaded — income, goals, city, savings data. Ask me anything and I will give you a personalised answer.`,
+    `Welcome back, ${p.name}! Your Roast&Rich AI is ready. What financial topic would you like to explore today?`,
+    `Hi ${p.name}! Ready to help with your finances. Whether it is saving, investing, goal planning, or budget analysis — just ask.`,
+  ];
+  addMsg('ai', welcomes[Math.floor(Math.random() * welcomes.length)], ts());
+
+  /* Preset chips — English only, practical questions users actually ask */
+  const chips = [
+    'Should I start a SIP?',
+    'How can I save more this month?',
+    'Is my spending pattern healthy?',
+    'What should I invest in right now?',
+    'How do I build an emergency fund?',
+    'How much do I need to retire comfortably?',
+  ];
+  document.getElementById('chips').innerHTML =
+    chips.map(q => `<span class="chip" onclick="chipClick('${q}')">${q}</span>`).join('');
+});
+</script>
+</body>
+</html>

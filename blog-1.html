@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>What is Roast&Rich? — Blog</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading article...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link" onclick="location.href='tracker.html'">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link active" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+      <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-nav-overlay hidden" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-links">
+    <a href="dashboard.html">Dashboard</a><a href="roast.html">🔥 Roast</a><a href="fomo.html">🚦 FOMO</a>
+    <a href="wealth.html">📈 Wealth</a><a href="budget.html">📊 Budget</a><a href="goals.html">🎯 Goals</a>
+    <a href="tracker.html">📅 Tracker</a><a href="mood.html">🧠 Mood</a><a href="rewards.html">🏆 Rewards</a>
+    <a href="chat.html">💬 AI Chat</a><a href="blog.html">📝 Blog</a><a href="vision.html">🌟 Vision</a>
+    <a href="mission.html">✨ Mission</a><a href="settings.html">⚙️ Settings</a>
+  </div>
+</div>
+
+<div class="blog-post-wrap">
+  <div class="blog-post-hero anim-fade-up">
+    <span class="blog-post-emoji">🔥</span>
+    <div style="font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--pink);margin-bottom:10px">Origin Story</div>
+    <h1 class="blog-post-title">What is Roast&Rich? Why we built this — and why you need it</h1>
+    <div class="blog-post-meta">
+      <span>📅 2026</span>
+      <span>⏱ 4 min read</span>
+      <span>🎯 All Gen Z</span>
+    </div>
+    <hr class="div"/>
+  </div>
+
+  <div class="blog-post-body anim-fade-up">
+
+    <p>Let's be honest. Most finance apps are <strong>boring as hell.</strong></p>
+
+    <p>They give you pie charts. They say things like "optimize your portfolio allocation." They assume you already know what a "portfolio" is. They're basically built for 40-year-old finance bros — not for 19-year-old college students in Jaipur trying to figure out why there's ₹0 left before the 25th of the month.</p>
+
+    <div class="highlight">
+      💡 <strong>That's the gap we wanted to fill.</strong> A finance tool that actually speaks Gen Z — with Hinglish, with sass, with real numbers, and zero condescension.
+    </div>
+
+    <h2>The idea: what if finance felt like a roast?</h2>
+
+    <p>You know how roasts are actually super effective? Like when your best friend says, ‘You order ₹2000 worth of biryani and then complain about being broke?’ — it stings, but it also <em>makes you think.</em></p>
+
+    <p>That's the core idea behind Roast&Rich. What if instead of dry advice, your finance app actually called you out? Not to shame you — but to show you the mirror, in the most Gen Z way possible.</p>
+
+    <p>We wanted an app that says:</p>
+    <ul>
+      <li>"₹3,200 on food delivery this month. That’s literally a month’s SIP, gone on cravings."</li>
+      <li>"This ₹4,500 jacket eats 40% of your remaining budget. Wait a week."</li>
+      <li>"Zero investments for 3 months running. Compounding is crying."</li>
+    </ul>
+
+    <p>And then also — fixes it. Actually gives you a plan.</p>
+
+    <h2>Who is Roast&Rich actually for?</h2>
+
+    <p>Everyone from age 13 to 28. We cover all of Gen Z:</p>
+    <ul>
+      <li>🎒 <strong>School students</strong> — managing pocket money, building first habits</li>
+      <li>🎓 <strong>College students</strong> — hostel budgets, Food-app addiction, first investments</li>
+      <li>💼 <strong>First jobbers</strong> — first salary, EMI decisions, "should I buy this phone?"</li>
+      <li>💻 <strong>Freelancers</strong> — irregular income, tax nightmares, no boss to help</li>
+    </ul>
+
+    <div class="callout-pink">
+      🚨 <strong>Important:</strong> Most finance tools are built for people who already have money and know what to do with it. We're built for people who are <em>figuring it all out in real time.</em>
+    </div>
+
+    <h2>What does the app actually do?</h2>
+
+    <p>We built 6 core tools, all in one place:</p>
+    <ul>
+      <li><strong>🔥 Money Roast</strong> — enter your monthly spend, get brutal honesty + a fix plan</li>
+      <li><strong>🚦 FOMO Filter</strong> — about to impulse buy? Check if it's actually worth it first</li>
+      <li><strong>📈 Wealth Builder</strong> — see your money compounding live, from today to retirement</li>
+      <li><strong>📊 Smart Budget</strong> — AI generates a budget personalised for YOUR city and situation</li>
+      <li><strong>🎯 Goal Tracker</strong> — car, house, trip — every dream has a monthly savings target</li>
+      <li><strong>💬 AI Chat</strong> — ask anything, AI already knows your full profile</li>
+    </ul>
+
+    <h2>Why now? Why us?</h2>
+
+    <p>Because the financial literacy gap in Gen Z is <strong>massive.</strong> We weren't taught this in school. Our parents' advice ("save karo beta") is too vague. And most online content is either too technical or trying to sell you something.</p>
+
+    <p>Roast&Rich is not here to sell you anything. No ads. No commissions. Just a tool that's genuinely on your side.</p>
+
+    <div class="highlight">
+      🚀 <strong>Bottom line:</strong> We built the app we wish existed when we were 18, broke, and completely confused about money. If that sounds like you — you're in the right place.
+    </div>
+
+    <p>Now go get roasted. 💀</p>
+
+  </div>
+
+  <div class="blog-nav">
+    <a href="blog.html" class="btn btn-ghost">← All Blogs</a>
+    <a href="blog-2.html" class="btn btn-pink">Next: What is SIP? →</a>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

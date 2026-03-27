@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Roast&Rich — Daily Tracker</title>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.page-wrap { max-width: 800px; margin: 0 auto; padding: 84px 40px 60px; }
+.tracker-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.add-form { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.entry-list { display: flex; flex-direction: column; gap: 8px; }
+.entry-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px;
+  transition: border-color .15s;
+}
+.entry-row:hover { border-color: var(--border2); }
+.entry-cat  { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.entry-info { flex: 1; min-width: 0; }
+.entry-name { font-weight: 600; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.entry-time { font-size: .72rem; color: var(--text3); margin-top: 2px; }
+.entry-amt  { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1rem; flex-shrink: 0; color: var(--pink); }
+.entry-del  { background: none; border: none; color: var(--text3); font-size: 1rem; cursor: pointer; padding: 4px; border-radius: 6px; transition: color .15s, background .15s; }
+.entry-del:hover { color: var(--danger); background: rgba(255,68,68,.1); }
+.history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; margin-top: 16px; }
+.hist-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; cursor: pointer; transition: border-color .15s; }
+.hist-card:hover { border-color: var(--pink); }
+.hist-date { font-size: .75rem; color: var(--text3); margin-bottom: 4px; }
+.hist-amt  { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--green); }
+.hist-count{ font-size: .72rem; color: var(--text3); margin-top: 2px; }
+@media(max-width:640px){ .page-wrap { padding: 80px 16px 60px; } .tracker-top { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div id="loading-screen">
+  <div class="loader-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></div>
+  <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  <div class="loader-tagline">Loading tracker...</div>
+</div>
+<nav class="navbar">
+  <div class="inner">
+    <a href="index.html" class="nav-logo"><span class="g">Roast</span><span class="p">&</span><span class="g">Rich</span></a>
+    <div class="nav-links">
+      <button class="nav-link" onclick="location.href='dashboard.html'">Dashboard</button>
+      <button class="nav-link" onclick="location.href='roast.html'">Roast</button>
+      <button class="nav-link" onclick="location.href='fomo.html'">FOMO</button>
+      <button class="nav-link" onclick="location.href='wealth.html'">Wealth</button>
+      <button class="nav-link" onclick="location.href='budget.html'">Budget</button>
+      <button class="nav-link" onclick="location.href='goals.html'">Goals</button>
+      <button class="nav-link active">Tracker</button>
+      <button class="nav-link" onclick="location.href='mood.html'">Mood</button>
+      <button class="nav-link" onclick="location.href='rewards.html'">Rewards</button>
+      <button class="nav-link" onclick="location.href='chat.html'">AI Chat</button>
+      <button class="nav-link" onclick="location.href='blog.html'">Blog</button>
+      <button class="nav-link" onclick="location.href='vision.html'">Vision</button>
+      <button class="nav-link" onclick="location.href='mission.html'">Mission</button>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-sm" id="theme-toggle" onclick="toggleTheme()">☀️ Light</button>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='settings.html'">⚙️</button>
+      <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header-inner">
+    <button class="back-btn" onclick="location.href='dashboard.html'">←</button>
+    <h1 class="display d-md">Daily Tracker 📅</h1>
+  </div>
+  <p class="body-md mb-16">Log every spend as it happens. Edit or delete anytime. See your pattern build up.</p>
+
+  <!-- Top metrics -->
+  <div class="tracker-top" id="tracker-top"></div>
+
+  <!-- Add entry form -->
+  <div class="add-form">
+    <div class="label-cap mb-12">Add expense</div>
+    <div class="grid-2" style="gap:12px">
+      <div class="form-group" style="margin:0">
+        <label>Category</label>
+        <select id="t-cat" class="form-control">
+          <option value="🍔 Food">🍔 Food</option>
+          <option value="🚇 Transport">🚇 Transport</option>
+          <option value="🛍️ Shopping">🛍️ Shopping</option>
+          <option value="🎬 Entertainment">🎬 Entertainment</option>
+          <option value="💄 Personal care">💄 Personal care</option>
+          <option value="📚 Study/Work">📚 Study/Work</option>
+          <option value="🏠 Rent/PG/Bills">🏠 Rent/PG/Bills</option>
+          <option value="🎲 Misc">🎲 Misc</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Amount (₹)</label>
+        <div class="input-wrap"><span class="input-prefix">₹</span>
+          <input type="number" id="t-amt" class="form-control green-focus" placeholder="0" min="1" step="1"/>
+        </div>
+      </div>
+    </div>
+    <div class="form-group mt-12" style="margin-bottom:12px">
+      <label>Note (optional)</label>
+      <input type="text" id="t-note" class="form-control" placeholder="e.g. App-ordered biryani, auto to college..."/>
+    </div>
+    <button class="btn btn-green btn-full" onclick="addEntry()">+ Add Expense</button>
+  </div>
+
+  <!-- Today's entries -->
+  <div class="label-cap mb-8" id="today-label">Today</div>
+  <div class="entry-list" id="entry-list">
+    <div class="body-sm" style="padding:16px 0;color:var(--text3)">No expenses logged today yet. Add your first one above!</div>
+  </div>
+
+  <!-- Past days -->
+  <div class="label-cap mb-8 mt-32">Recent days</div>
+  <div class="history-grid" id="history-grid"></div>
+</div>
+
+<script src="app.js"></script>
+<script>
+const CAT_COLORS = {
+  '🍔 Food': '#ff2070', '🚇 Transport': '#aaee22', '🛍️ Shopping': '#00e5ff',
+  '🎬 Entertainment': '#ffd600', '💄 Personal care': '#ff6b35',
+  '📚 Study/Work': '#b44aff', '🏠 Rent/PG/Bills': '#00e676', '🎲 Misc': '#888',
+};
+
+function renderAll() {
+  const p = RR.profile;
+  const monthTotal = getMonthTotal();
+  const todayEntry = getTodayLog();
+  const income = p ? (p.income || 0) : 0;
+  const remaining = income - monthTotal;
+
+  // Top metrics
+  document.getElementById('tracker-top').innerHTML = `
+    <div class="metric-card"><div class="metric-val pink">${fmt(todayEntry.total)}</div><div class="metric-lbl">Spent today</div></div>
+    <div class="metric-card"><div class="metric-val">${fmt(monthTotal)}</div><div class="metric-lbl">This month total</div></div>
+    <div class="metric-card"><div class="metric-val ${remaining<0?'pink':'green'}">${fmt(remaining)}</div><div class="metric-lbl">Budget remaining</div></div>`;
+
+  // Today label
+  const now = new Date();
+  document.getElementById('today-label').textContent =
+    `Today — ${now.toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'short' })}`;
+
+  // Today entries
+  const list = document.getElementById('entry-list');
+  if (todayEntry.entries.length === 0) {
+    list.innerHTML = `<div class="body-sm" style="padding:16px 0;color:var(--text3)">No expenses logged today yet. Add your first one above!</div>`;
+  } else {
+    list.innerHTML = todayEntry.entries.slice().reverse().map(e => {
+      const cat   = e.category;
+      const color = CAT_COLORS[cat] || '#888';
+      const emoji = cat.split(' ')[0];
+      return `
+        <div class="entry-row">
+          <div class="entry-cat" style="background:${color}22;border:1px solid ${color}44">${emoji}</div>
+          <div class="entry-info">
+            <div class="entry-name">${e.note || cat}</div>
+            <div class="entry-time">${cat} · ${e.time}</div>
+          </div>
+          <div class="entry-amt">${fmt(e.amount)}</div>
+          <button class="entry-del" onclick="removeEntry(${e.id})" title="Delete">✕</button>
+        </div>`;
+    }).join('');
+  }
+
+  // History (last 7 days excluding today)
+  const todayStr = today();
+  const log = RR.dailyLog.filter(l => l.date !== todayStr).slice(-7).reverse();
+  const hgrid = document.getElementById('history-grid');
+  if (log.length === 0) {
+    hgrid.innerHTML = `<div class="body-sm" style="color:var(--text3)">No past data yet — keep logging!</div>`;
+  } else {
+    hgrid.innerHTML = log.map(l => {
+      const d = new Date(l.date);
+      const label = d.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short' });
+      return `
+        <div class="hist-card">
+          <div class="hist-date">${label}</div>
+          <div class="hist-amt">${fmt(l.total)}</div>
+          <div class="hist-count">${l.entries.length} expense${l.entries.length !== 1 ? 's' : ''}</div>
+        </div>`;
+    }).join('');
+  }
+}
+
+function addEntry() {
+  const cat  = strVal('t-cat');
+  const amt  = val('t-amt');
+  const note = strVal('t-note');
+  if (!amt || amt <= 0) { alert('Please enter an amount!'); return; }
+  saveTodayEntry(cat, amt, note);
+  document.getElementById('t-amt').value  = '';
+  document.getElementById('t-note').value = '';
+  renderAll();
+}
+
+function removeEntry(id) {
+  deleteEntry(id);
+  renderAll();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  requireProfile();
+  renderAll();
+});
+</script>
+</body>
+</html>

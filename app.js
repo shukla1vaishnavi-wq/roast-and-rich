@@ -601,3 +601,11 @@ function formatRoast(obj){
 
 // ─── UI HELPERS ───────────────────────────────────────────
 function showLoading(el){ el.innerHTML='<div class="loading-row"><span class="spinner"></span> Thinking...</div>'; }
+
+function pronoun(p){
+  if(!p) return 'they/them';
+  var g=(p.gender||'').toLowerCase();
+  if(g==='male'||g==='m') return 'he/him';
+  if(g==='female'||g==='f') return 'she/her';
+  return 'they/them';
+}

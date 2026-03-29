@@ -553,12 +553,50 @@ function roastEngine(s, p){
 }
 
 function formatRoast(obj){
-  if(typeof obj==='string') return '<div class="roast-section roast-fire"><div class="rs-label">The Roast</div><div class="rs-body">'+obj.replace(/\n/g,'<br>')+'</div></div>';
-  var bullets=(obj.fixes||[]).map(function(f){return '<div class="roast-bullet">'+f+'</div>';}).join('');
-  return '<div class="roast-section roast-fire"><div class="rs-label">The Roast</div><div class="rs-body">'+obj.roast+'</div></div>'+
-    '<div class="roast-section roast-reality"><div class="rs-label">Reality Check</div><div class="rs-body">'+obj.reality+'</div></div>'+
-    '<div class="roast-section roast-fix"><div class="rs-label">The Fix</div><div class="rs-body">'+bullets+'</div></div>'+
-    '<div class="roast-section roast-win"><div class="rs-label">Win This Month</div><div class="rs-body">'+obj.win+'</div></div>';
+  var s='<style>'+
+    '.roast-section{border-radius:12px;padding:18px 20px;margin-bottom:14px;}'+
+    '.roast-fire{border:1.5px solid #ff2070;background:rgba(255,32,112,0.08);}'+
+    '.roast-reality{border:1.5px solid #ffd600;background:rgba(255,214,0,0.07);}'+
+    '.roast-fix{border:1.5px solid #aaee22;background:rgba(170,238,34,0.07);}'+
+    '.roast-win{border:1.5px solid #ffd600;background:rgba(255,214,0,0.07);}'+
+    '.rs-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}'+
+    '.roast-fire .rs-label{color:#ff2070;}'+
+    '.roast-reality .rs-label{color:#ffd600;}'+
+    '.roast-fix .rs-label{color:#aaee22;}'+
+    '.roast-win .rs-label{color:#ffd600;}'+
+    '.rs-label-icon{margin-right:6px;}'+
+    '.rs-body{font-size:15px;line-height:1.6;color:inherit;}'+
+    '.roast-bullet{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;font-size:14px;line-height:1.5;}'+
+    '.roast-bullet::before{content:"→";color:#aaee22;flex-shrink:0;margin-top:1px;}'+
+    '</style>';
+
+  if(typeof obj==='string') return s+
+    '<div class="roast-section roast-fire">'+
+      '<div class="rs-label"><span class="rs-label-icon">🔥</span>THE ROAST</div>'+
+      '<div class="rs-body">'+obj.replace(/\n/g,'<br>')+'</div>'+
+    '</div>';
+
+  var bullets=(obj.fixes||[]).map(function(f){
+    return '<div class="roast-bullet">'+f+'</div>';
+  }).join('');
+
+  return s+
+    '<div class="roast-section roast-fire">'+
+      '<div class="rs-label"><span class="rs-label-icon">🔥</span>THE ROAST</div>'+
+      '<div class="rs-body">'+obj.roast+'</div>'+
+    '</div>'+
+    '<div class="roast-section roast-reality">'+
+      '<div class="rs-label"><span class="rs-label-icon">😬</span>REALITY CHECK</div>'+
+      '<div class="rs-body">'+obj.reality+'</div>'+
+    '</div>'+
+    '<div class="roast-section roast-fix">'+
+      '<div class="rs-label"><span class="rs-label-icon">✅</span>THE FIX</div>'+
+      '<div class="rs-body">'+bullets+'</div>'+
+    '</div>'+
+    '<div class="roast-section roast-win">'+
+      '<div class="rs-label"><span class="rs-label-icon">🏆</span>WIN THIS MONTH</div>'+
+      '<div class="rs-body">'+obj.win+'</div>'+
+    '</div>';
 }
 
 // ─── UI HELPERS ───────────────────────────────────────────

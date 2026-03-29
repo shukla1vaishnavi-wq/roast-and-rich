@@ -296,13 +296,13 @@ var FIXED_GREETINGS = {
 
 function detectSimpleMessage(text){
   var t=text.toLowerCase().trim();
-  if(/^(hi|hi!|hii|hiii|hey|hey!|heyyy|hi there)$/.test(t)) return 'hi';
-  if(/^(hello|hello!|helo|helloo)$/.test(t)) return 'hello';
-  if(/^(how are you|how r u|how are you\??|how are you doing|how do you do)$/.test(t)) return 'howAreYou';
-  if(/^(bye|goodbye|good bye|bye bye|see you|see ya|cya|ttyl)$/.test(t)) return 'bye';
-  if(/^(thanks|thank you|thank you!|thx|thnks|thankyou|tysm|ty)$/.test(t)) return 'thanks';
-  if(/^(okay|okay!|alright|sounds good)$/.test(t)) return 'okay';
-  if(/^(ok|ok!|got it|sure)$/.test(t)) return 'ok';
+  if(/^(hi|hi!|hii|hiii|hey|hey!|heyyy|hi there|heyy)$/.test(t)) return 'hi';
+  if(/^(hello|hello!|helo|helloo|heloo|hellooo)$/.test(t)) return 'hello';
+  if(/^(how are you|how r u|how are you\??|how are you doing|how do you do|kese ho)$/.test(t)) return 'howAreYou';
+  if(/^(bye|goodbye|good bye|bye bye|see you|see ya|cya|ttyl|byee)$/.test(t)) return 'bye';
+  if(/^(thanks|thank you|thank you!|thx|thnks|thankyou|tysm|ty|thanku|thank u|thank uu)$/.test(t)) return 'thanks';
+  if(/^(okay|okay!|alright|sounds good|okaiee|okiee|ohkay)$/.test(t)) return 'okay';
+  if(/^(ok|ok!|got it|sure|hmm|hm)$/.test(t)) return 'ok';
   return null;
 }
 
@@ -601,18 +601,3 @@ function formatRoast(obj){
 
 // ─── UI HELPERS ───────────────────────────────────────────
 function showLoading(el){ el.innerHTML='<div class="loading-row"><span class="spinner"></span> Thinking...</div>'; }
-
-function calcCorpus(monthly, saved, years, rate){
-  rate = rate || 0.12;
-  monthly = monthly || 0;
-  saved   = saved   || 0;
-  years   = years   || 0;
-  if(years<=0) return saved;
-  // Use iterative calculation to avoid floating point issues with ** operator
-  var corpus = saved;
-  var monthlyRate = rate / 12;
-  for(var m=0; m<years*12; m++){
-    corpus = corpus * (1 + monthlyRate) + monthly;
-  }
-  return Math.round(corpus);
-}

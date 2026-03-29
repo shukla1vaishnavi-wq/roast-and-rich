@@ -34,11 +34,11 @@
     <div class="controls">
       <div class="form-group">
         <div class="range-row"><label>Monthly SIP / investment (₹)</label><span class="range-val" id="sip-show">₹2,000</span></div>
-        <input type="range" id="sip" min="100" max="50000" value="2000" step="100" oninput="update()"/>
+        <input type="range" id="sip" min="100" max="500000" value="2000" step="100" oninput="update()"/>
       </div>
       <div class="form-group">
         <div class="range-row"><label>Expected annual return (%)</label><span class="range-val" id="rate-show">12%</span></div>
-        <input type="range" id="rate" min="6" max="18" value="12" step="0.5" oninput="update()"/>
+        <input type="range" id="rate" min="6" max="30" value="12" step="0.5" oninput="update()"/>
       </div>
       <div class="form-group">
         <div class="range-row"><label>Investment period (years)</label><span class="range-val" id="yrs-show">30 yrs</span></div>
@@ -46,7 +46,7 @@
       </div>
       <div class="form-group">
         <div class="range-row"><label>Already saved / invested today (₹)</label><span class="range-val" id="saved-show">₹0</span></div>
-        <input type="range" id="saved" min="0" max="1000000" value="0" step="5000" oninput="update()"/>
+        <input type="range" id="saved" min="0" max="10000000" value="0" step="5000" oninput="update()"/>
       </div>
 
       <!-- Corpus display -->

@@ -268,12 +268,12 @@ const FIXED_GREETINGS = {
 function detectSimpleMessage(text) {
   const t = text.toLowerCase().trim();
   // Exact or near-exact greetings
-  if (/^(hi|hi!|hii|hiii|hey|hey!|heyyy|hi there)$/.test(t)) return 'hi';
-  if (/^(hello|hello!|helo|helloo)$/.test(t)) return 'hello';
+  if (/^(hi|hi!|hii|hiii|hey|hey!|heyyy|hi there|heyy)$/.test(t)) return 'hi';
+  if (/^(hello|hello!|helo|helloo|hellooo)$/.test(t)) return 'hello';
   if (/^(how are you|how r u|how are you\??|how are you doing|how do you do|you doing well\??)$/.test(t)) return 'howAreYou';
-  if (/^(bye|goodbye|good bye|bye bye|see you|see ya|cya|ttyl)$/.test(t)) return 'bye';
-  if (/^(thanks|thank you|thank you!|thx|thnks|thankyou|tysm|ty)$/.test(t)) return 'thanks';
-  if (/^(ok|ok!|okay|okay!|alright|got it|sure|sounds good)$/.test(t)) return t.startsWith('ok')&&!t.startsWith('okay')?'ok':'okay';
+  if (/^(bye|goodbye|good bye|bye bye|see you|see ya|cya|ttyl|byeeee|byee)$/.test(t)) return 'bye';
+  if (/^(thanks|thank you|thank you!|thx|thnks|thankyou|tysm|ty|thanku|thank u|thank uu)$/.test(t)) return 'thanks';
+  if (/^(ok|ok!|okay|okay!|alright|got it|sure|sounds good|okiee|okie|ohkaiee)$/.test(t)) return t.startsWith('ok')&&!t.startsWith('okay')?'ok':'okay';
   return null;
 }
 
@@ -523,6 +523,14 @@ function roastEngine(s, p) {
   const spendPct = income > 0 ? Math.round((total / income) * 100) : 0;
   const name = p.name || 'friend';
 
+  // Reusable core advice (avoids repetition across blocks)
+  const coreAdvice = [
+    'Set aside 3–5% of your income to build your skills',
+    'Make sure you and your dependents have medical insurance',
+    'Have term insurance that\'s about 20× your annual income'
+  ];
+
+  // ── 1. No data at all ────────────────────────────────────
   if (total === 0 && invest === 0) return {
     roast: `${name}, zero spending entered. Either the data is incomplete, or you genuinely spent nothing this month — which would be impressive but unlikely. Please enter your actual figures for an honest roast.`,
     reality: `No data means no analysis. Check your payment app history for the last 30 days and fill in the real numbers.`,
@@ -530,41 +538,47 @@ function roastEngine(s, p) {
     win: `You came here willing to look at your finances. That takes self-awareness. Now put in the real numbers.`
   };
 
-  if (savePct > 30) return {
-    roast: `${name}, you invested ${savePct}% of your income this month. Honestly? My roast algorithm keeps returning "this person is doing great" — I genuinely cannot roast you on this.`,
-    reality: `At this savings rate, you are in the top 10% of your age group for financial discipline. Your future self is quietly grateful.`,
-    fixes: ['If all investments are in one fund, consider diversifying across two funds', 'Increase your monthly investment by 10% next month — you clearly have the capacity', 'Verify your emergency fund (3 to 6 months of expenses) is fully funded', 'Consider PPF for guaranteed returns plus a tax benefit under Section 80C'],
-    win: `${fmt(invest)} invested this month. That is not just a habit — that is a lifestyle choice that will pay off significantly over time.`
-  };
-
+  // ── 2. Spending but zero investment ─────────────────────
   if (invest === 0 && total > 0) return {
     roast: `${name}, ₹${total.toLocaleString('en-IN')} spent and ₹0 invested. The market was open every single day this month and you did not participate once. Your bank account is essentially a temporary holding area for your next purchase.`,
     reality: `Six months at this pace: ₹${(total * 6).toLocaleString('en-IN')} spent, ₹0 invested. Every month you delay investing is time that compounding cannot give back to you. This is not a recoverable mistake — but it is a fixable one.`,
-    fixes: [`Start a monthly SIP through any investment platform — even ₹500 is a start (takes 10 minutes)`, 'Set up an automatic investment transfer for the day after your salary arrives', `Reduce your biggest expense by 15% and redirect that amount to a monthly investment`, `Write down one specific financial goal — having a named target makes investing feel meaningful`],
+    fixes: [`Start a monthly SIP through any investment platform — even ₹500 is a start (takes 10 minutes)`, 'Set up an automatic investment transfer for the day after your salary arrives', `Reduce your biggest expense by 15% and redirect that amount to a monthly investment`, `Write down one specific financial goal — having a named target makes investing feel meaningful`, ...coreAdvice],
     win: income > 0 ? `You earn ${fmt(income)} per month — the raw material for wealth-building is there. It just needs direction.` : `You opened this app and looked at your spending. Most people avoid this entirely. That takes courage.`
   };
 
+  // ── 3. Food overspending ─────────────────────────────────
   if (food > Math.max(income * 0.25, 3500)) return {
-    roast: `${name}, ₹${food.toLocaleString('en-IN')} on food this month. That works out to ₹${Math.round(food / 30).toLocaleString('en-IN')} per day on eating. At this rate, food delivery platforms have better visibility into your finances than you do.`,
+    roast: `${name}, ₹${food.toLocaleString('en-IN')} on food this month. That works out to ₹${Math.round((food || 0) / 30).toLocaleString('en-IN')} per day on eating. At this rate, food delivery platforms have better visibility into your finances than you do.`,
     reality: `₹${(food * 12).toLocaleString('en-IN')} per year on food alone. That is the equivalent of a quality laptop, an international trip, or the foundation of a solid investment portfolio — currently going to takeaway packaging.`,
     fixes: [`Cook at home four days a week and limit delivery orders to twice a week — saves approximately ₹${Math.round(food * 0.4).toLocaleString('en-IN')} per month`, 'Meal prep on weekends — two hours covers five days of lunches', 'Local tiffin services near your home or workplace offer better value than food delivery apps', `Redirect ₹${Math.round(food * 0.35).toLocaleString('en-IN')} saved per month to a monthly investment`],
     win: invest > 0 ? `Your monthly investment is running. That is the most important habit — keep it going alongside the dietary adjustments.` : `You tracked your food spending honestly. Awareness is the starting point for change.`
   };
 
+  // ── 4. Shopping overspending ─────────────────────────────
   if (shop > Math.max(income * 0.2, 2000)) return {
     roast: `${name}, ₹${shop.toLocaleString('en-IN')} on shopping this month. The wardrobe has more options than the bank account has runway. Every sale notification is triggering a purchase — that is not shopping, that is emotional spending with a discount sticker attached.`,
     reality: `₹${(shop * 12).toLocaleString('en-IN')} per year on shopping. That is a car down payment, three years of investment returns, or the foundation of a proper emergency fund — currently going to items you needed less than you thought you did at the time.`,
-    fixes: ['Apply the 48-hour rule: add to cart, close the tab, return tomorrow — most impulse purchases disappear on their own', 'Unsubscribe from brand promotional emails and disable sale notifications', 'One-in-one-out rule: donate or sell something old before buying something new', `Reducing shopping by 30% saves ₹${Math.round(shop * 0.3).toLocaleString('en-IN')} per month — redirect this to your emergency fund`],
+    fixes: ['Apply the 48-hour rule: add to cart, close the tab, return tomorrow — most impulse purchases disappear on their own', 'Unsubscribe from brand promotional emails and disable sale notifications', 'One-in-one-out rule: donate or sell something old before buying something new', `Reducing shopping by 30% saves ₹${Math.round(shop * 0.3).toLocaleString('en-IN')} per month — redirect this to your emergency fund`, ...coreAdvice],
     win: invest > 0 ? `Investing while overspending on shopping — at least one half of the equation is right. Now fix the other half.` : `You know exactly where your money is going. That level of awareness is the first step toward changing it.`
   };
 
+  // ── 5. Travel overspending ───────────────────────────────
   if (travel > Math.max(income * 0.15, 2000)) return {
     roast: `${name}, ₹${travel.toLocaleString('en-IN')} on transport this month. Ride-hailing apps are treating you like a premium subscriber at this point — because you effectively are one.`,
     reality: `₹${(travel * 12).toLocaleString('en-IN')} per year on commuting. Public transport exists and costs a fraction of this amount. The math is difficult to argue with.`,
-    fixes: ['Public transport combined with a short auto or rickshaw ride is 60% cheaper than booking a cab for the full journey', 'A monthly bus or metro pass pays for itself within the first six rides', 'Bike rentals or cycling for regular routes is cheaper and healthier', 'Plan your routes to combine multiple errands into single trips instead of multiple individual ones'],
+    fixes: ['Public transport combined with a short auto or rickshaw ride is 60% cheaper than booking a cab for the full journey', 'A monthly bus or metro pass pays for itself within the first six rides', 'Bike rentals or cycling for regular routes is cheaper and healthier', 'Plan your routes to combine multiple errands into single trips instead of multiple individual ones', ...coreAdvice],
     win: invest > 0 ? `Despite the transport spending, you are still investing. That discipline counts.` : `At least you are getting places. Now make sure your bank balance is heading somewhere too.`
   };
 
+  // ── 6. Great saver — positive roast (moved to last) ─────
+  if (savePct > 30) return {
+    roast: `${name}, you invested ${savePct}% of your income this month. Honestly? My roast algorithm keeps returning "this person is doing great" — I genuinely cannot roast you on this.`,
+    reality: `At this savings rate, you are in the top 10% of your age group for financial discipline. Your future self is quietly grateful.`,
+    fixes: ['Set aside 3–5% of your income to build your skills', 'Make sure you and your dependents have medical insurance', 'Have term insurance that\'s about 20× your annual income', 'If all investments are in one fund, consider diversifying across two funds', 'Increase your investment by 10-15% next year — you clearly have the capacity', 'Verify your emergency fund (6 to 9 months of expenses) is fully funded', 'Consider PPF for guaranteed returns plus a tax benefit under Section 80C'],
+    win: `${fmt(invest)} invested this month. That is not just a habit — that is a lifestyle choice that will pay off significantly over time.`
+  };
+
+  // ── 7. General fallback ──────────────────────────────────
   const cats = [{ n: 'Food', a: food }, { n: 'Travel', a: travel }, { n: 'Shopping', a: shop }, { n: 'Entertainment', a: ent }].sort((a, b) => b.a - a.a);
   const worst = cats[0];
   return {

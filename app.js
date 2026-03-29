@@ -514,88 +514,187 @@ function goalStrategy(g, p) {
   return `${g.name} Goal Strategy — ${fmt(g.amount)} in ${g.years} years:\n\n→ Monthly savings needed: ${fmt(pm)}\n→ ${feasible ? 'Your current savings capacity of ' + fmt(canSave) + ' covers this goal' : 'Shortfall: ' + fmt(gap) + ' per month — close this by reducing your highest non-essential expense'}\n→ Best investment vehicle for a ${g.years}-year timeline: ${vehicle}\n→ Action step: open a separate account specifically for this goal and set up an automatic monthly transfer of ${fmt(pm)}\n→ Review progress every 6 months — if your income increases, increase the monthly amount proportionally\n\nLabeling money for a specific goal dramatically increases the likelihood of achieving it. Treat this like a non-negotiable monthly bill.`;
 }
 
-// ─── ROAST ENGINE ─────────────────────────────────────────
-function roastEngine(s, p) {
-  const { food, travel, shop, rent, groom, ent, misc, invest } = s;
-  const total = food + travel + shop + rent + groom + ent + misc;
-  const income = p.income || 0;
-  const savePct = income > 0 ? Math.round((invest / income) * 100) : 0;
-  const spendPct = income > 0 ? Math.round((total / income) * 100) : 0;
-  const name = p.name || 'friend';
-
-  // Reusable core advice (avoids repetition across blocks)
-  const coreAdvice = [
-    'Set aside 3–5% of your income to build your skills',
-    'Make sure you and your dependents have medical insurance',
-    'Have term insurance that\'s about 20× your annual income'
-  ];
-
-  // ── 1. No data at all ────────────────────────────────────
-  if (total === 0 && invest === 0) return {
-    roast: `${name}, zero spending entered. Either the data is incomplete, or you genuinely spent nothing this month — which would be impressive but unlikely. Please enter your actual figures for an honest roast.`,
-    reality: `No data means no analysis. Check your payment app history for the last 30 days and fill in the real numbers.`,
-    fixes: ['Open your payment app and check your transaction history', 'Enter honest figures — the AI will not judge you, only roast you', 'Accurate data leads to genuinely useful advice'],
-    win: `You came here willing to look at your finances. That takes self-awareness. Now put in the real numbers.`
-  };
-
-  // ── 2. Spending but zero investment ─────────────────────
-  if (invest === 0 && total > 0) return {
-    roast: `${name}, ₹${total.toLocaleString('en-IN')} spent and ₹0 invested. The market was open every single day this month and you did not participate once. Your bank account is essentially a temporary holding area for your next purchase.`,
-    reality: `Six months at this pace: ₹${(total * 6).toLocaleString('en-IN')} spent, ₹0 invested. Every month you delay investing is time that compounding cannot give back to you. This is not a recoverable mistake — but it is a fixable one.`,
-    fixes: [`Start a monthly SIP through any investment platform — even ₹500 is a start (takes 10 minutes)`, 'Set up an automatic investment transfer for the day after your salary arrives', `Reduce your biggest expense by 15% and redirect that amount to a monthly investment`, `Write down one specific financial goal — having a named target makes investing feel meaningful`, ...coreAdvice],
-    win: income > 0 ? `You earn ${fmt(income)} per month — the raw material for wealth-building is there. It just needs direction.` : `You opened this app and looked at your spending. Most people avoid this entirely. That takes courage.`
-  };
-
-  // ── 3. Food overspending ─────────────────────────────────
-  if (food > Math.max(income * 0.25, 3500)) return {
-    roast: `${name}, ₹${food.toLocaleString('en-IN')} on food this month. That works out to ₹${Math.round((food || 0) / 30).toLocaleString('en-IN')} per day on eating. At this rate, food delivery platforms have better visibility into your finances than you do.`,
-    reality: `₹${(food * 12).toLocaleString('en-IN')} per year on food alone. That is the equivalent of a quality laptop, an international trip, or the foundation of a solid investment portfolio — currently going to takeaway packaging.`,
-    fixes: [`Cook at home four days a week and limit delivery orders to twice a week — saves approximately ₹${Math.round(food * 0.4).toLocaleString('en-IN')} per month`, 'Meal prep on weekends — two hours covers five days of lunches', 'Local tiffin services near your home or workplace offer better value than food delivery apps', `Redirect ₹${Math.round(food * 0.35).toLocaleString('en-IN')} saved per month to a monthly investment`],
-    win: invest > 0 ? `Your monthly investment is running. That is the most important habit — keep it going alongside the dietary adjustments.` : `You tracked your food spending honestly. Awareness is the starting point for change.`
-  };
-
-  // ── 4. Shopping overspending ─────────────────────────────
-  if (shop > Math.max(income * 0.2, 2000)) return {
-    roast: `${name}, ₹${shop.toLocaleString('en-IN')} on shopping this month. The wardrobe has more options than the bank account has runway. Every sale notification is triggering a purchase — that is not shopping, that is emotional spending with a discount sticker attached.`,
-    reality: `₹${(shop * 12).toLocaleString('en-IN')} per year on shopping. That is a car down payment, three years of investment returns, or the foundation of a proper emergency fund — currently going to items you needed less than you thought you did at the time.`,
-    fixes: ['Apply the 48-hour rule: add to cart, close the tab, return tomorrow — most impulse purchases disappear on their own', 'Unsubscribe from brand promotional emails and disable sale notifications', 'One-in-one-out rule: donate or sell something old before buying something new', `Reducing shopping by 30% saves ₹${Math.round(shop * 0.3).toLocaleString('en-IN')} per month — redirect this to your emergency fund`, ...coreAdvice],
-    win: invest > 0 ? `Investing while overspending on shopping — at least one half of the equation is right. Now fix the other half.` : `You know exactly where your money is going. That level of awareness is the first step toward changing it.`
-  };
-
-  // ── 5. Travel overspending ───────────────────────────────
-  if (travel > Math.max(income * 0.15, 2000)) return {
-    roast: `${name}, ₹${travel.toLocaleString('en-IN')} on transport this month. Ride-hailing apps are treating you like a premium subscriber at this point — because you effectively are one.`,
-    reality: `₹${(travel * 12).toLocaleString('en-IN')} per year on commuting. Public transport exists and costs a fraction of this amount. The math is difficult to argue with.`,
-    fixes: ['Public transport combined with a short auto or rickshaw ride is 60% cheaper than booking a cab for the full journey', 'A monthly bus or metro pass pays for itself within the first six rides', 'Bike rentals or cycling for regular routes is cheaper and healthier', 'Plan your routes to combine multiple errands into single trips instead of multiple individual ones', ...coreAdvice],
-    win: invest > 0 ? `Despite the transport spending, you are still investing. That discipline counts.` : `At least you are getting places. Now make sure your bank balance is heading somewhere too.`
-  };
-
-  // ── 6. Great saver — positive roast (moved to last) ─────
-  if (savePct > 30) return {
-    roast: `${name}, you invested ${savePct}% of your income this month. Honestly? My roast algorithm keeps returning "this person is doing great" — I genuinely cannot roast you on this.`,
-    reality: `At this savings rate, you are in the top 10% of your age group for financial discipline. Your future self is quietly grateful.`,
-    fixes: ['Set aside 3–5% of your income to build your skills', 'Make sure you and your dependents have medical insurance', 'Have term insurance that\'s about 20× your annual income', 'If all investments are in one fund, consider diversifying across two funds', 'Increase your investment by 10-15% next year — you clearly have the capacity', 'Verify your emergency fund (6 to 9 months of expenses) is fully funded', 'Consider PPF for guaranteed returns plus a tax benefit under Section 80C'],
-    win: `${fmt(invest)} invested this month. That is not just a habit — that is a lifestyle choice that will pay off significantly over time.`
-  };
-
-  // ── 7. General fallback ──────────────────────────────────
-  const cats = [{ n: 'Food', a: food }, { n: 'Travel', a: travel }, { n: 'Shopping', a: shop }, { n: 'Entertainment', a: ent }].sort((a, b) => b.a - a.a);
-  const worst = cats[0];
+// ─── ROAST ENGINE (FIXED — income-relative logic) ─────────────────────────────
+function getRatios(s, income) {
+  const total = s.food + s.travel + s.shop + s.rent + s.groom + s.ent + s.misc;
+  const safe  = income > 0 ? income : 1;
   return {
-    roast: `${name}, ₹${total.toLocaleString('en-IN')} total spending this month — ${spendPct > 70 ? `that is ${spendPct}% of your income. That ratio needs to come down.` : `your biggest spending category is ${worst.n} at ₹${worst.a.toLocaleString('en-IN')}. That is where the leak is.`}`,
-    reality: `At this pace: ₹${(total * 6).toLocaleString('en-IN')} out in six months, ₹${(invest * 6).toLocaleString('en-IN')} invested. ${invest > 0 ? 'The saving habit is present — it just needs to grow alongside discipline on spending.' : 'Zero investment over six months means zero compounding. Time does not wait.'}`,
-    fixes: [`Reduce ${worst.n} spending by 20% — saves approximately ₹${Math.round(worst.a * 0.2).toLocaleString('en-IN')} per month`, 'Review all active subscriptions — recurring charges that you have forgotten about are common', 'Set a weekly spending limit per category instead of tracking monthly — it is easier to manage in smaller time windows', invest === 0 ? 'Start a monthly SIP investment today — the process takes under 10 minutes and the habit is life-changing' : `Increase your monthly investment by ₹${Math.max(200, Math.round(invest * 0.1)).toLocaleString('en-IN')} next month`],
-    win: invest > 0 ? `₹${invest.toLocaleString('en-IN')} invested this month — real, tangible progress. Keep growing that number.` : `You tracked your spending and looked at the numbers honestly. That self-awareness is where positive change begins.`
+    total,
+    totalPct:  Math.round((total    / safe) * 100),
+    foodPct:   Math.round((s.food   / safe) * 100),
+    travelPct: Math.round((s.travel / safe) * 100),
+    shopPct:   Math.round((s.shop   / safe) * 100),
+    rentPct:   Math.round((s.rent   / safe) * 100),
+    groomPct:  Math.round((s.groom  / safe) * 100),
+    entPct:    Math.round((s.ent    / safe) * 100),
+    miscPct:   Math.round((s.misc   / safe) * 100),
+    investPct: Math.round((s.invest / safe) * 100),
+    leftover:  income - total - s.invest,
   };
 }
 
+function getBiggest(s) {
+  const cats = [
+    { name: '🍔 Food',      val: s.food   },
+    { name: '🚇 Travel',    val: s.travel },
+    { name: '🛍️ Shopping',  val: s.shop   },
+    { name: '🏠 Rent',      val: s.rent   },
+    { name: '💄 Grooming',  val: s.groom  },
+    { name: '🎬 Entertain', val: s.ent    },
+    { name: '🎲 Misc',      val: s.misc   },
+  ];
+  return cats.reduce((a, b) => b.val > a.val ? b : a, { name: 'Misc', val: 0 });
+}
+
+function roastEngine(s, p) {
+  const income  = (p && p.income) ? p.income : 0;
+  const name    = (p && p.name)   ? p.name   : 'friend';
+  const r       = getRatios(s, income);
+  const biggest = getBiggest(s);
+
+  // ── No income set ──
+  if (!income) {
+    return {
+      roast:   `${name}, you haven't set your income in your profile. Without that, ₹3,000 spend could be nothing (on a ₹5L salary) or catastrophic (on ₹15K). Update your profile first so this roast actually means something.`,
+      reality: 'Without income context, spending numbers are meaningless. Go to Settings → Profile → set monthly income.',
+      fixes:   ['Update your income in Profile/Settings', 'Then come back for a proper roast 😈'],
+      win:     'At least you opened the app.',
+      mode:    'neutral'
+    };
+  }
+
+  // ── Everything zero ──
+  if (r.total === 0 && s.invest === 0) {
+    return {
+      roast:   `${name}, zero everything? Either you forgot to fill this in, or you survived the whole month on air and vibes. Open your UPI/bank app, check last 30 days, and enter real numbers.`,
+      reality: 'No data = no roast. Check your payment app transaction history.',
+      fixes:   ['Open Google Pay / PhonePe / bank app', 'Check last 30 days of transactions', 'Enter honest numbers — the roast won\'t kill you 😈'],
+      win:     'You opened the app. Step one done.',
+      mode:    'neutral'
+    };
+  }
+
+  // ── BALLER MODE: spending ≤5% of income ──
+  if (r.totalPct <= 5 && r.total > 0) {
+    const idle = r.leftover;
+    return {
+      roast:   `${name}, you're spending ${r.totalPct}% of your income. That's not a spending problem — that's a "what are you doing with the other ${100 - r.totalPct - r.investPct}%?" problem. Are you hoarding cash under a mattress?`,
+      reality: `₹${fmtN(idle)} sits idle every month. In a year that's ₹${fmtN(idle * 12)} quietly losing 6% to inflation while doing nothing for you.`,
+      fixes:   [
+        `You're only investing ${r.investPct}% — with this income you could easily do 40–50%`,
+        'Park idle cash in liquid mutual funds or index ETFs — takes 10 minutes to set up',
+        'Max out your PPF limit (₹1.5L/year) for guaranteed tax-free returns',
+        'You\'re allowed to spend a little more on experiences too — you\'ve earned it'
+      ],
+      win:     `Spending ${r.totalPct}% of income is genuinely elite. ${r.investPct >= 20 ? 'And that SIP? Respect.' : 'Now put that idle cash to work.'}`,
+      mode:    'baller'
+    };
+  }
+
+  // ── GREAT SAVER: saving ≥30% and total spend ≤60% ──
+  if (r.investPct >= 30 && r.totalPct <= 60) {
+    return {
+      roast:   `${name}, investing ${r.investPct}% of income? You absolute nerd 🤓 — while everyone else is crying about money you're quietly building wealth like a silent assassin. My roast algorithm keeps returning "this person is doing great."`,
+      reality: `Keep this up for 10 years and compounding turns ₹${fmtN(s.invest)}/month into something genuinely shocking. You're doing better than 95% of people your age.`,
+      fixes:   [
+        r.rentPct > 40 ? `Rent is ${r.rentPct}% of income — the golden rule is ≤30%. Explore flatmate options` : `Diversify SIP across both equity and debt funds if not already done`,
+        r.foodPct > 15 ? `Food at ${r.foodPct}% — slight trim possible, but not critical at your savings rate` : `Ensure you have term insurance worth 20× annual income`,
+        'Build an emergency fund of 6–9 months of expenses if not done yet',
+        'Consider ELSS for tax-saving under Section 80C'
+      ],
+      win:     `${r.investPct}% savings rate. You're the main character of your own financial story.`,
+      mode:    'win'
+    };
+  }
+
+  // ── OVERSPENT: spent more than income ──
+  if (r.leftover < 0) {
+    const overBy = Math.abs(r.leftover);
+    return {
+      roast:   `${name}, you spent ₹${fmtN(overBy)} MORE than your income this month 🚨 You're not living paycheck to paycheck — you're living BEYOND paycheck. That money came from savings, debt, or magic, none of which are sustainable.`,
+      reality: `Overshoot ₹${fmtN(overBy)}/month × 6 months = ₹${fmtN(overBy * 6)} of savings burned or debt accumulated. In a year: ₹${fmtN(overBy * 12)}. This is a genuine emergency.`,
+      fixes:   [
+        `${biggest.name} is your biggest drain at ₹${fmtN(biggest.val)} (${Math.round(biggest.val / income * 100)}% of income) — cut this first`,
+        `Entertainment ₹${fmtN(s.ent)} + Misc ₹${fmtN(s.misc)} = pure discretionary — halve both immediately`,
+        s.shop > 0 ? `Shopping ₹${fmtN(s.shop)} — implement a 48-hour rule before any purchase` : `Set a hard daily spend limit in the Budget tab`,
+        'You need a strict monthly cap — set it in Budget tab right now'
+      ],
+      win:     'You tracked your spending. Awareness is step one. Now act on it before next month.',
+      mode:    'fire'
+    };
+  }
+
+  // ── ZERO SAVINGS on real income ──
+  if (s.invest === 0 && income > 15000) {
+    return {
+      roast:   `${name}, ₹${fmtN(income)} income and ₹0 invested. Zero. Zilch. The market was open every single day this month and you didn't participate once. ${biggest.name} alone swallowed ₹${fmtN(biggest.val)} (${Math.round(biggest.val / income * 100)}% of your income).`,
+      reality: `In 5 years at 0% savings rate: ₹0 invested. If you'd put just 10% (₹${fmtN(Math.round(income * 0.10))}) in an index fund monthly, that's ~₹${fmtN(Math.round(income * 0.10 * 12 * 5 * 1.76))} in 5 years at 12% CAGR. You're leaving that on the table.`,
+      fixes:   [
+        `Start a SIP of ₹${fmtN(Math.round(income * 0.15))} today (15% of income) — takes 10 minutes on any investment app`,
+        `${biggest.name} at ₹${fmtN(biggest.val)} is your biggest leak — trim it by 20% and redirect to SIP`,
+        s.misc > 0 ? `Misc ₹${fmtN(s.misc)} = ₹${fmtN(s.misc * 12)}/year on things you can't even name` : `Review all UPI autopay subscriptions — forgotten ones add up`,
+        'Automate savings transfer on salary day so you can\'t spend it first'
+      ],
+      win:     `₹${fmtN(income)} income — the raw material for wealth-building is there. It just needs direction.`,
+      mode:    'fire'
+    };
+  }
+
+  // ── HIGH RENT WARNING ──
+  const rentDominates = r.rentPct > 40;
+
+  // ── STANDARD ROAST — intensity based on totalPct ──
+  const intensity = r.totalPct > 80 ? 'high' : r.totalPct > 55 ? 'medium' : 'low';
+  let roast, reality;
+
+  if (intensity === 'high') {
+    roast   = `${name}, you're burning ${r.totalPct}% of your income — ${r.totalPct > 90 ? 'that\'s not a budget, that\'s a bonfire. You have more month than money.' : 'leaving almost nothing for future you. Present you is robbing future you daily.'} ${biggest.name} alone is eating ${Math.round(biggest.val / income * 100)}% of your income (₹${fmtN(biggest.val)}).`;
+    reality = `Spending ${r.totalPct}% of income with only ${r.investPct}% invested — in 10 years you'll have ₹${fmtN(Math.round(s.invest * 12 * 10 * 1.8))} vs a potential ₹${fmtN(Math.round(income * 0.20 * 12 * 10 * 2.1))} if you rebalanced today. That gap is your lifestyle compounding against you.`;
+  } else if (intensity === 'medium') {
+    roast   = `${name}, ${r.totalPct}% of income spent — not catastrophic, but not winning either. ${biggest.name} at ₹${fmtN(biggest.val)} (${Math.round(biggest.val / income * 100)}% of income) is the main leak. Middle-of-the-road budgeting = middle-of-the-road results.`;
+    reality = `Saving ${r.investPct}% — ${r.investPct < 10 ? 'below the bare minimum. Most experts recommend 20%+.' : 'okay, but 25% is achievable with small cuts.'} The gap between ${r.investPct}% and 25% savings rate compounds to lakhs over 10 years.`;
+  } else {
+    roast   = `${name}, spending only ${r.totalPct}% of income — actually solid! ${biggest.name} is your biggest category at ${Math.round(biggest.val / income * 100)}% of income. ${r.investPct < 10 ? 'But you\'re barely investing — fix that and you\'re genuinely doing great.' : 'Keep this discipline going.'}`;
+    reality = `You have ₹${fmtN(r.leftover)} left after spending and saving. The question is: what's happening to that money? Idle cash loses ~6% per year to inflation silently.`;
+  }
+
+  const fixes = [];
+  if (rentDominates)      fixes.push(`Rent is ${r.rentPct}% of income (rule: ≤30%) — explore a flatmate, negotiate, or relocate`);
+  if (r.foodPct > 15)     fixes.push(`Food at ${r.foodPct}% of income — cook 3 days a week and save ~₹${fmtN(Math.round(s.food * 0.3))}/month instantly`);
+  if (r.shopPct > 10)     fixes.push(`Shopping ₹${fmtN(s.shop)} — enforce a 48-hour rule before any purchase`);
+  if (r.miscPct > 8)      fixes.push(`Misc ₹${fmtN(s.misc)} (${r.miscPct}% of income) — cap it at ₹${fmtN(Math.round(income * 0.04))}/month`);
+  if (r.investPct < 15)   fixes.push(`Only investing ${r.investPct}% — bump SIP to ₹${fmtN(Math.round(income * 0.20))} (20% of income)`);
+  if (r.entPct > 10)      fixes.push(`Entertainment ${r.entPct}% of income — one fewer outing/month saves ₹${fmtN(Math.round(s.ent * 0.35))}`);
+  if (fixes.length < 3)   fixes.push('Automate savings transfer on salary day before you can spend it');
+  if (fixes.length < 3)   fixes.push('Track daily spend for 1 week in Tracker tab — awareness alone cuts spending ~15%');
+
+  const win =
+    r.investPct >= 20 ? `${r.investPct}% savings rate — top tier. Compounding is working for you right now.`
+  : r.investPct >= 10 ? `${r.investPct}% invested is a real start. Push to 20% and you'll feel the difference in 2 years.`
+  : r.totalPct < 50   ? `Spending only ${r.totalPct}% of income — the discipline is there. Now redirect the idle cash.`
+  : 'You tracked your spending and that alone puts you ahead of 70% of people. Now act on it.';
+
+  return { roast, reality, fixes: fixes.slice(0, 4), win, mode: intensity === 'high' ? 'fire' : 'neutral' };
+}
+
+// ─── helper used inside roastEngine (in case fmt() isn't available here) ───
+function fmtN(n) {
+  if (!n && n !== 0) return '0';
+  return '₹' + Math.abs(Math.round(n)).toLocaleString('en-IN');
+}
+
+// ─── FORMAT ROAST ─────────────────────────────────────────
 function formatRoast(obj) {
-  if (typeof obj === 'string') return `<div class="roast-section roast-fire"><div class="rs-label">The Roast</div><div class="rs-body">${obj.replace(/\n/g, '<br>')}</div></div>`;
-  const bullets = (obj.fixes || []).map(f => `<div class="roast-bullet">${f}</div>`).join('');
-  return `<div class="roast-section roast-fire"><div class="rs-label">The Roast</div><div class="rs-body">${obj.roast}</div></div>
-<div class="roast-section roast-reality"><div class="rs-label">Reality Check</div><div class="rs-body">${obj.reality}</div></div>
-<div class="roast-section roast-fix"><div class="rs-label">The Fix</div><div class="rs-body">${bullets}</div></div>
-<div class="roast-section roast-win"><div class="rs-label">Win This Month</div><div class="rs-body">${obj.win}</div></div>`;
+  if (typeof obj === 'string') {
+    return `<div class="roast-section roast-fire"><div class="rs-label">The Roast</div><div class="rs-body">${obj.replace(/\n/g, '<br>')}</div></div>`;
+  }
+  const bullets   = (obj.fixes || []).map(f => `<div class="roast-bullet">${f}</div>`).join('');
+  const fireClass = obj.mode === 'baller' ? 'roast-calm' : obj.mode === 'win' ? 'roast-win' : 'roast-fire';
+  return `
+    <div class="roast-section ${fireClass}"><div class="rs-label">🔥 The Roast</div><div class="rs-body">${obj.roast}</div></div>
+    ${obj.reality ? `<div class="roast-section roast-reality"><div class="rs-label">😬 Reality Check</div><div class="rs-body">${obj.reality}</div></div>` : ''}
+    <div class="roast-section roast-fix"><div class="rs-label">✅ The Fix</div>${bullets}</div>
+    <div class="roast-section roast-win"><div class="rs-label">🏆 Win This Month</div><div class="rs-body">${obj.win}</div></div>`;
 }
 
 // ─── UI HELPERS ───────────────────────────────────────────
